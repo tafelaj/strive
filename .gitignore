@@ -1,0 +1,8 @@
+*.pyc
+settings.py
+/.idea
+DATABASES
+db.sqlite3
+__pycache__
+migrations/
+files/
