@@ -1,0 +1,11 @@
+Cython==0.29.23
+Django==2.2.10
+django-crispy-forms==1.8.1
+djangorestframework==3.12.2
+eth-hash==0.3.1
+eth-typing==2.2.2
+Pillow==7.2.0
+python-barcode==0.13.1
+pytz==2019.3
+sqlparse==0.3.0
+toolz==0.11.1
