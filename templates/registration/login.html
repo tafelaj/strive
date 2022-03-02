@@ -1,10 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'investor/freebie.html' %}
+{% block title %}Login{% endblock %}
 
-</body>
-</html>
+{% block hero %}{% endblock %}
+{% block who_we_are %}{% endblock%}
+{% block testimonials %}{% endblock %}
+{% block get_started %}{% endblock %}
+{% block services %}
+    <div class="section">
+        <div class="container">
+            <br>
+            <br>
+            <div class="row">
+                <div class="title-area">
+                    <h2>Strive Login</h2>
+                    <div class="separator separator-danger">✻</div>
+                    <p class="description">Enter your Account Details Below To Login</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3"></div>
+                <div class="col-md-6">
+                    <div id="login">
+                        <div class="container">
+                            <div id="login-row" class="row justify-content-center align-items-center">
+                                <div id="login-column" class="col-md-6">
+                                    <div id="login-box" class="col-md-12">
+                                        <form id="login-form" class="form" action="" method="post">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label for="username" class="text-info">Username or NRC:</label><br>
+                                                <input type="text" name="username" id="username" class="form-control" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="password" class="text-info">Password:</label><br>
+                                                <input type="password" name="password" id="password" class="form-control" required>
+                                            </div>
+                                            <div class="form-group text-center">
+                                                <input type="submit" name="submit" class="btn btn-success" value="submit">
+                                            </div>
+
+                                            <div id="register-link" class="text-right">
+                                                Don't have an account? <a href="{% url 'investor:user_create' %}" class="text-danger">Register here</a>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock services %}

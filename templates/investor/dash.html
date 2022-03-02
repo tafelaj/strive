@@ -1,0 +1,84 @@
+{% extends 'investor/freebie.html' %}
+{% block title %}Home{% endblock %}
+{% block hero %}
+    <div class="section section-header">
+    <br>
+    </div>
+{% endblock %}
+{% block who_we_are %}
+    Account RoundUp
+    actual balance
+    available balance
+{% endblock %}
+{% block get_started %}{% endblock %}
+{% block testimonials %}{% endblock %}
+
+{% block services %}
+    <div class="section">
+        <div class="container">
+
+            <div class="row">
+                <div class="title-area">
+                    <h2>Strive Dashboard</h2>
+                    <div class="separator separator-danger">✻</div>
+                    <h1 class="description">Overview of your Strive account.</h1>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="info-icon">
+                        <div class="icon text-success">
+                            <i class="pe-7s-safe"></i>
+                        </div>
+                        <h3>Savings</h3>
+                        <p class="description">Let Your Money Work For You By Saving and earning interest.</p>
+                    </div>
+                    <div class="card">
+                      <div class="card-header">
+                          <hr style="height: auto" class="btn-success">
+                        <div class="card-body">
+                            <strong>Total: K{{ savings }}</strong><br>
+                        </div>
+                      </div>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="info-icon">
+                        <div class="icon text-info">
+                            <i class="pe-7s-cash"></i>
+                        </div>
+                        <h3>Loans</h3>
+                        <p class="description">We create a persona regarding the multiple wardrobe accessories that we provide..</p>
+                    </div>
+                    <div class="card">
+                      <div class="card-header">
+                          <hr style="height: auto" class="btn-success">
+                        <div class="card-body">
+                            <strong>Total: K{{ loans }}</strong><br>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-icon">
+                        <div class="icon text-warning">
+                            <i class="pe-7s-car"></i>
+                        </div>
+                        <h3>Asset Financing</h3>
+                        <p class="description">We like to present the world with our work, so we make sure we spread the word regarding.</p>
+                    </div>
+                    <div class="card">
+                      <div class="card-header">
+                          <hr style="height: auto" class="btn-success">
+                        <div class="card-body">
+                            <strong>Total: K{{ assets }}</strong><br>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock services %}

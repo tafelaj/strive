@@ -8,4 +8,5 @@ app_name = 'investor'
 urlpatterns = [
     path('user/create/', views.SignUpView.as_view(), name='user_create'),
     path('user/login/', views.Login.as_view(), name='user_login'),
+    path('', views.Home.as_view(), name='home'),
 ]
