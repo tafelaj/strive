@@ -24,6 +24,7 @@ urlpatterns = [
     path('', Landing.as_view(), name='landing'),
     path('admin/', admin.site.urls),
     path('investor/', include('investor.urls')),
+    path('loans/', include('loans.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
 ]
 if settings.DEBUG:

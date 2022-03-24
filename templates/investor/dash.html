@@ -1,84 +1,77 @@
-{% extends 'investor/freebie.html' %}
+{% extends 'presento/base.html' %}
 {% block title %}Home{% endblock %}
-{% block hero %}
-    <div class="section section-header">
-    <br>
-    </div>
-{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block testimonials_section%}{% endblock %}
+
+{% block hero %}{% endblock %}
+{% block services_section %}{% endblock %}
+{% block counts_section %}{% endblock %}
+{% block pricing_section %}{% endblock %}
+{% block team_section %}{% endblock %}
+
 {% block who_we_are %}
     Account RoundUp
     actual balance
     available balance
 {% endblock %}
-{% block get_started %}{% endblock %}
-{% block testimonials %}{% endblock %}
 
-{% block services %}
-    <div class="section">
-        <div class="container">
+{% block portfolio_section %}
+    <section id="services" class="services "></section>
+     <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container" data-aos="fade-up">
 
-            <div class="row">
-                <div class="title-area">
-                    <h2>Strive Dashboard</h2>
-                    <div class="separator separator-danger">✻</div>
-                    <h1 class="description">Overview of your Strive account.</h1>
-                </div>
-            </div>
-            <div class="row">
+        <div class="section-title">
+          <h3>Strive Dashboard</h3>
+            <small>✻ Overview of your Strive account ✻ <br>{{ request.user.get_full_name }}</small>
+          </div>
 
-                <div class="col-md-4">
-                    <div class="info-icon">
-                        <div class="icon text-success">
-                            <i class="pe-7s-safe"></i>
-                        </div>
-                        <h3>Savings</h3>
-                        <p class="description">Let Your Money Work For You By Saving and earning interest.</p>
-                    </div>
-                    <div class="card">
-                      <div class="card-header">
-                          <hr style="height: auto" class="btn-success">
-                        <div class="card-body">
-                            <strong>Total: K{{ savings }}</strong><br>
-                        </div>
-                      </div>
-                    </div>
+        <div class="row" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-lg-12 d-flex justify-content-center">
+              {% include 'partials/messages.html' %}
 
-                </div>
-                <div class="col-md-4">
-                    <div class="info-icon">
-                        <div class="icon text-info">
-                            <i class="pe-7s-cash"></i>
-                        </div>
-                        <h3>Loans</h3>
-                        <p class="description">We create a persona regarding the multiple wardrobe accessories that we provide..</p>
-                    </div>
-                    <div class="card">
-                      <div class="card-header">
-                          <hr style="height: auto" class="btn-success">
-                        <div class="card-body">
-                            <strong>Total: K{{ loans }}</strong><br>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="info-icon">
-                        <div class="icon text-warning">
-                            <i class="pe-7s-car"></i>
-                        </div>
-                        <h3>Asset Financing</h3>
-                        <p class="description">We like to present the world with our work, so we make sure we spread the word regarding.</p>
-                    </div>
-                    <div class="card">
-                      <div class="card-header">
-                          <hr style="height: auto" class="btn-success">
-                        <div class="card-body">
-                            <strong>Total: K{{ assets }}</strong><br>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    </div>
-    {% endblock services %}
+
+         <div class="row">
+
+          <div class="col-md-6">
+            <div class="card demo-icons">
+              <div class="card-header">
+                <h5 class="card-title">Savings <a href="{% url 'investor:savings' %}" aria-expanded="false" aria-controls="unpaid"><small>Details</small></a></h5>
+                  <p class="card-category">Let Your Money Work For You By Saving and earning interest.</p>
+                <p class="card-footer">
+                   <strong>K {{ savings }}</strong> <br>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card demo-icons">
+              <div class="card-header">
+                <h5 class="card-title">Loans <a href="{% url 'loans:home' %}" aria-expanded="false" aria-controls="unpaid"><small>Details</small></a></h5>
+                  <p class="card-category">Get an easy loan to help financing a venture.</p>
+                <p class="card-footer">
+                    <strong>K {{ loans }}</strong><br>
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+          <hr>
+
+    </section><!-- End Portfolio Section -->
+    <section class="services"></section>
+
+    {% endblock portfolio_section %}
+
+{% block about_section %}{% endblock %}
+{% block tabs_section %}{% endblock %}
+{% block clients_section %}{% endblock %}
+{% block faq %}{% endblock %}
+{% block contact_section %}{% endblock %}
+{% block footer %}{% endblock %}

@@ -24,18 +24,53 @@ class StriveUser(AbstractUser):
     def __str__(self):
         return self.get_full_name()
 
-class InvestorAccount(models.Model):
+class Account(models.Model):
+    ACCOUNT_TYPES = (('Savings', '1'),
+                     ('Asset', '2'),)
+    account_type = models.CharField(max_length=1, choices=ACCOUNT_TYPES, default='1')
     user = models.ForeignKey(StriveUser, on_delete=models.CASCADE)
-    current_balance = models.FloatField()
 
-class InvestorDeposit(models.Model):
+    def get_savings_total(self):
+        # get all deposits
+        deposits = Deposit.objects.filter(models.Q(account=self.id) & models.Q(spent=False))
+
+        # get interest earned
+
+        # get total balance
+        # todo all unspent deposits + interest earned
+
+        # get cumulative balance
+        cumulative_balance = 0
+        for deposit in deposits:
+            cumulative_balance += deposit.amount
+        return cumulative_balance
+
+class Deposit(models.Model):
+    STATUS = (
+        ('1','Pending Approval' ),
+        ('2', 'Approved' ),
+        ('3', 'Active'),
+    )
     user = models.ForeignKey(StriveUser, on_delete=models.CASCADE)
     amount = models.FloatField()
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=1, choices=STATUS, default='1')
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    spent = models.BooleanField(default=False)
 
-class InvestorWithdraw(models.Model):
+class Withdraw(models.Model):
+    STATUS = (
+        ('1', 'Pending Approval'),
+        ('2', 'Approved'),
+    )
     user = models.ForeignKey(StriveUser, on_delete=models.CASCADE)
     amount = models.FloatField()
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=1, choices=STATUS, default='1')
+
+class Interest(models.Model):
+    rate = models.FloatField(blank=True, null=True)
+    deposit = models.ForeignKey(Deposit, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
 
 

@@ -1,26 +1,28 @@
 from django.db import models
 from investor.models import StriveUser
 
-TERMS = (
-    ('1', 'One Month'),
-    ('2', 'Two Months'),
-    ('3', 'Three Months'),
-)
-
-INSTALLMENTS = (
-    ('1', 'One Installment'),
-    ('2', 'Two Installment'),
-    ('3', 'Three Installment'),
-)
 
 # Create your models here.
 class LoanAccount(models.Model):
     user = models.ForeignKey(StriveUser, on_delete=models.CASCADE)
-    outstanding_balance = models.FloatField()
+    outstanding_balance = models.FloatField() #principle - payment
     date = models.DateTimeField(auto_created=True)
-    loan_amount = models.FloatField()
-    term = models.CharField(max_length=1, choices=TERMS)
+    principle_amount = models.FloatField()
     apr = models.FloatField()
+
+    def get_interest_amount(self):
+        if self.outstanding_balance > 0:
+            amount = self.outstanding_balance * self.apr
+        else:
+            amount = self.principle_amount * self.apr
+        return amount
+
+    def get_loan_total(self):
+        if self.outstanding_balance > 0:
+            total = self.outstanding_balance + self.get_interest_amount()
+        else:
+            total = self.principle_amount + self.get_interest_amount()
+        return total
 
 class LoanPayments(models.Model):
     loan = models.ForeignKey(LoanAccount, on_delete=models.CASCADE)
@@ -30,6 +32,4 @@ class LoanPayments(models.Model):
 class LoanApplications(models.Model):
     user = models.ForeignKey(StriveUser, on_delete=models.CASCADE)
     amount = models.FloatField()
-    term = models.CharField(max_length=1, choices=TERMS)
     apr = models.FloatField() # add choices to the form
-    installments = models.CharField(max_length=1, choices=INSTALLMENTS)

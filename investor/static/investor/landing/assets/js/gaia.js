@@ -165,7 +165,7 @@ gaia = {
             } else {
                 if( !transparent ) {
                     transparent = true;
-                    $navbar.addClass('navbar-transparent');
+                    //$navbar.addClass('navbar-transparent');
                 }
             }
     }, 17),
