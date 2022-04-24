@@ -2,7 +2,21 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+class Institution(models.Model):
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
+class Station(models.Model):
+    institution = models.ForeignKey(Institution, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    address = models.CharField(max_length=50)
+    phone = models.CharField(max_length=15)
+
+    def __str__(self):
+        return str(self.name) + ' ' + str(self.address)
 
 class StriveUser(AbstractUser):
     middle_name = models.CharField(max_length=50, null=True, blank=True)
@@ -10,6 +24,8 @@ class StriveUser(AbstractUser):
     phone = models.CharField(max_length=13, help_text='Enter Your Phone Number')
     birth_date = models.DateField(auto_created=True, null=True)
     nrc = models.CharField(max_length=15)
+    loans_admin = models.BooleanField(default=False)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE, null=True, blank=True)
 
     def get_full_name(self):
         """

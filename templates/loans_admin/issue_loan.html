@@ -1,0 +1,158 @@
+{% extends 'loans_admin/base.html' %}
+{% block title %}Issue Loans{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block testimonials_section%}{% endblock %}
+
+{% block hero %}{% endblock %}
+{% block services_section %}{% endblock %}
+{% block counts_section %}{% endblock %}
+{% block pricing_section %}{% endblock %}
+{% block team_section %}{% endblock %}
+{% block auto_complete_tags %}
+    <link rel="stylesheet" href="{% static 'jquery-ui-1.13.1/jquery-ui.css' %}">
+  <script src="{% static 'jquery-ui-1.13.1/external/jquery/jquery.js' %}"></script>
+  <script src="{% static 'jquery-ui-1.13.1/jquery-ui.js' %}"></script>
+{% endblock auto_complete_tags %}
+{% block js_files %}
+     <!-- Vendor JS Files -->
+
+
+  <script src="{% static 'investor/presento/assets/vendor/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+  <script src="{% static 'investor/presento/assets/vendor/owl.carousel/owl.carousel.min.js'%}"></script>
+
+  <script src="{% static 'investor/presento/assets/vendor/counterup/counterup.min.js'%}"></script>
+  <script src="{% static 'investor/presento/assets/vendor/isotope-layout/isotope.pkgd.min.js'%}"></script>
+  <script src="{% static 'investor/presento/assets/vendor/venobox/venobox.min.js'%}"></script>
+  <script src="{% static 'investor/presento/assets/vendor/aos/aos.js'%}"></script>
+  <script>
+      // See https://github.com/facebook/react/issues/20829#issuecomment-802088260
+      if (!crossOriginIsolated) SharedArrayBuffer = ArrayBuffer;
+    </script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'investor/presento/assets/js/main.js'%}" type="module"></script>
+{% endblock js_files%}
+
+{% block portfolio_section %}
+    <section id="services" class="services "></section>
+     <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h3>New Loan</h3>
+            <small>✻ Fill In The Forms Below To Issue A New Loan ✻ <br>{{ request.user.get_full_name }} | {{ request.user.station }}</small>
+          </div>
+
+        <div class="row" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-lg-12 d-flex justify-content-center">
+              {% include 'partials/messages.html' %}
+
+          </div>
+        </div>
+
+        <form action="" method="post">
+            {% csrf_token %}
+             <div class="row">
+
+                 {% if customer_form %}
+                      <div class="col-md-12">
+                        <div class="card demo-icons">
+                          <div class="card-header">
+                            <h5 class="card-title">Customer</h5>
+                              <p class="card-category">Customer Details</p>
+                          </div>
+                           <div class="card-body">
+                               {{ customer_form | crispy}}
+                           </div>
+
+                        </div>
+                      </div>
+                 {% else %}
+                     <div class="col-md-12">
+                        <div class="card demo-icons">
+                          <div class="card-header">
+                            <h5 class="card-title">Customer</h5>
+                          </div>
+                           <div class="card-body">
+                               <label for="customer_id">Customer ID*</label>
+                               <input type="text" class="form-control" placeholder="Enter Customer ID or Name" required id="customer_id" name="customer_id">
+                           </div>
+                        </div>
+                      </div>
+                 {% endif %}
+
+             </div>
+
+            <br>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card demo-icons">
+                  <div class="card-header">
+                    <h5 class="card-title">Loans</h5>
+                      <p class="card-category">Loans Details</p>
+                  </div>
+                    <div class="card-body">
+                        {{ loan_form | crispy }}
+                        <div class="text-center">
+                            <input class="btn btn-info" type="submit" value="Issue Loan">
+                        </div>
+
+                    </div>
+                <div class="card-footer text-center">
+                    <p>You Can View The Terms and Conditions <a href="{% url 'loans_admin:terms' %}">here</a>.</p>
+
+                </div>
+                </div>
+              </div>
+
+            </div>
+        </form>
+      </div>
+
+        <!-- Scripts for autocomplete-->
+    <!-- Customer Autocomplete functionality-->
+        <script>
+            $(function () {
+                //alert('kaya');
+
+            //Customer Auto Complete
+            $('body').on('focus', '.product', function (e) {
+                           $(this).autocomplete({
+                               source: availableCustomers,
+                               minLength: 1
+                           })
+                        });
+
+            //Customer ID autoComplete
+            var availableCustomers = [
+                    {% for customer in customers %}
+                        {label: "{{ customer }}", value: "{{ customer.id }}"},
+                    {% endfor %}
+                ];
+
+            $('#customer_id').autocomplete({
+                source: availableCustomers,
+                minLength: 1
+            });
+            //console.log(availableCustomers);
+
+
+            });
+
+
+        </script>
+
+
+    </section><!-- End Portfolio Section -->
+    <section class="services"></section>
+
+    {% endblock portfolio_section %}
+
+{% block about_section %}{% endblock %}
+{% block tabs_section %}{% endblock %}
+{% block clients_section %}{% endblock %}
+{% block faq %}{% endblock %}
+{% block contact_section %}{% endblock %}
+{% block footer %}{% endblock %}

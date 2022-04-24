@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('investor/', include('investor.urls')),
     path('loans/', include('loans.urls')),
+    path('loans/admin/', include('loans_admin.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
 ]
 if settings.DEBUG:

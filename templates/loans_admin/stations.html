@@ -1,0 +1,106 @@
+{% extends 'loans_admin/base.html' %}
+{% block title %}Stations{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block testimonials_section%}{% endblock %}
+
+{% block hero %}{% endblock %}
+{% block services_section %}{% endblock %}
+{% block counts_section %}{% endblock %}
+{% block pricing_section %}{% endblock %}
+{% block team_section %}{% endblock %}
+
+{% block portfolio_section %}
+    <section id="services" class="services "></section>
+     <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h3>Station Management</h3>
+            <small>✻ Update or Add Stations ✻ <br>{{ request.user.get_full_name }} | {{ request.user.station }}</small>
+          </div>
+
+        <div class="row" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-lg-12 d-flex justify-content-center">
+              {% include 'partials/messages.html' %}
+
+          </div>
+        </div>
+
+         <div class="row">
+
+          <div class="col-md-12">
+            <div class="card demo-icons">
+              <div class="card-header">
+                <h5 class="card-title">{{ request.user.station.institution | upper }} </h5>
+                  <p class="card-category">{{ request.user.station.institution.address | upper }}</p>
+              </div>
+               <div class="card-body">
+                   <p>Below Is A Form With All Of The Stations For Your Institution</p>
+                   <div class="table-responsive">
+			</div>
+               </div>
+            </div>
+          </div>
+
+         </div>
+
+        <br>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card demo-icons">
+              <div class="card-header">
+                <h5 class="card-title">Update Or Add Stations</h5>
+              </div>
+                <div class="card-body">
+                <form action="" method="post" class="form">
+                {% csrf_token %}
+                {{ form.non_feild_errors }}
+                {{ formset.management_form }}
+                {% if formset|length > 0 %}
+                    {% for form in formset %}
+                        {{ form.id }}
+                        <div class="form-row">
+
+                            <div class="form-group col-md-4 md-0 col-sm-12 col-lg-4">
+                                            {{ form.name|as_crispy_field }}
+                            </div>
+
+                            <div class="form-group col-md-4 col-lg-4 col-sm-12">
+                                        {{ form.address|as_crispy_field }}
+                                    </div>
+
+                        <div class="form-group col-md-4 col-lg-4 col-sm-12">
+                                        {{ form.phone|as_crispy_field }}
+                                    </div>
+                        </div>
+                                    <hr style="background-color: #00bbff">
+                    {% endfor %}
+                    <div class="col-md-12 col-lg-12 text-center">
+                        <input class="btn btn-primary bt-sm" type="submit" value="Submit">
+                    </div>
+
+                {% endif %}
+
+            </form>
+
+                </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+          <hr>
+
+    </section><!-- End Portfolio Section -->
+    <section class="services"></section>
+
+    {% endblock portfolio_section %}
+
+{% block about_section %}{% endblock %}
+{% block tabs_section %}{% endblock %}
+{% block clients_section %}{% endblock %}
+{% block faq %}{% endblock %}
+{% block contact_section %}{% endblock %}
+{% block footer %}{% endblock %}

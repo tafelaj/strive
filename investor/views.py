@@ -26,7 +26,10 @@ class Login(FormView):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            return HttpResponseRedirect(reverse_lazy('investor:home'))
+            if user.loans_admin:
+                return HttpResponseRedirect(reverse_lazy('loans_admin:loans_admin_home'))
+            else:
+                return HttpResponseRedirect(reverse_lazy('investor:home'))
         else:
             error = 'Your Account Was Not Found. Check Your Username and Password. ' \
                     'Contact Your Admin If The Problem Persists.'
