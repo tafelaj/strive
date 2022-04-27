@@ -75,7 +75,7 @@
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                          </div>
                     </div>
 
@@ -134,13 +134,12 @@
 
              {% endfor %}
          {% else %}
-             <div class="row">
-                 <div class="col-md-auto col-lg-12 col-sm-12 text-center">
-                    <div>
-                        <h5 class="text-danger">You Have No Customers Yet.<br> Customers Will Show Up Here As You Add Them.</h5>
-                    </div>
-                 </div>
-             </div>
+
+            <div class="row" data-aos="fade-up" data-aos-delay="100">
+              <div class="col-lg-12 d-flex justify-content-center">
+                  <h5 class="text-danger">You Have No Customers Yet.<br> Customers Will Show Up Here As You Add Them.</h5>
+              </div>
+            </div>
 
             {% endif %}
 

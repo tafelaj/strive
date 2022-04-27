@@ -8,7 +8,7 @@ class DateInput(forms.DateInput):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        exclude = ['station',]
+        exclude = ['station','black_listed']
         widgets = {'date_of_birth': DateInput()}
 
 

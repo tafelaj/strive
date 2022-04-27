@@ -1,0 +1,93 @@
+{% extends 'loans_admin/base.html' %}
+{% load static %}
+{% block title %}Monthly Summery List{% endblock %}
+{% block testimonials_section%}{% endblock %}
+
+{% block hero %}{% endblock %}
+{% block services_section %}{% endblock %}
+{% block counts_section %}{% endblock %}
+{% block pricing_section %}{% endblock %}
+{% block team_section %}{% endblock %}
+
+{% block portfolio_section %}
+    <section id="services" class="services "></section>
+     <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Monthly Shop Summaries</h2>
+            <small>List Of Summaries Of Station Business <br>{{ request.user.get_full_name }} | {{ request.user.station }}</small>
+          </div>
+
+        <div class="row" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-lg-12 d-flex justify-content-center">
+              {% include 'partials/messages.html' %}
+
+          </div>
+        </div>
+
+      <div class="row">
+          <div class="col-md-auto">
+              {% if show_previous_year == 0 %}
+              <a href="{% url 'loans_admin:month_summary_list' show_previous_year=1 %}" class="btn-outline-info">Show Previous Year Summeries</a>
+              {% endif %}
+
+          {% if show_previous_year == 1 %}
+              <a href="{% url 'loans_admin:month_summary_list' show_previous_year=0 %}" class="btn-outline-info">Show Current Year Summeries</a>
+          {% endif %}
+          </div>
+      </div>
+
+         <div class="row">
+         {% if months %}
+          <div class="table-responsive">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>No.</th>
+							<th>Summary Month</th>
+						</tr>
+					</thead>
+					<tbody id="inv_tbody">
+
+                    {% for month in months %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+							<td><a href="#">{{ month.0}}, {{ month.2 }}</a> </td>
+
+                            <td >
+                                <a href="{% url 'loans_admin:month_summary_detail' month=month.1 year=month.2 month_name=month.0 %}" class="btn btn-primary btn-sm">
+                                        <i class="nc-icon nc-simple-info"></i>
+                                        Review
+                                    </a>
+                            </td>
+						</tr>
+
+                    {% endfor %}
+					</tbody>
+				</table>
+			</div>
+        {% else %}
+                <div class="text-center col-lg-12">
+                        <h5 class="btn-outline-info">We Currently Have No Summaries To Show</h5><br>
+                </div>
+         {% endif %}
+        </div>
+
+          <hr>
+          </div>
+
+    </section><!-- End Portfolio Section -->
+    <section class="services"></section>
+{% endblock portfolio_section%}
+
+{% block javascript %}
+{% endblock %}
+
+{% block about_section %}{% endblock %}
+{% block tabs_section %}{% endblock %}
+{% block clients_section %}{% endblock %}
+{% block faq %}{% endblock %}
+{% block contact_section %}{% endblock %}
+{% block footer %}{% endblock %}

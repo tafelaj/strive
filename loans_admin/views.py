@@ -241,6 +241,184 @@ class SummaryView(FormView):
             return HttpResponseRedirect(reverse_lazy('loans_admin:summary'))
 
 
+class SummaryList(ListView):
+    model = Summery
+    template_name = 'loans_admin/summary_list.html'
+    context_object_name = 'summaries'
+
+    def get_queryset(self):
+        q = Summery.objects.filter(Q(station=self.request.user.station))
+        return q
+
+class SummeryDetail(DetailView):
+    template_name = 'loans_admin/summary_details.html'
+    model = Summery
+    context_object_name = 'summary'
+
+    def get_context_data(self, **kwargs):
+        date = kwargs['object'].date
+        kwargs['loans'] = Loan.objects.filter(Q(issue_date__day=date.day) & Q(issue_date__month=date.month) & Q(issue_date__year=date.year))
+        kwargs['today_payments'] = LoanPayment.objects.filter(Q(date__day=date.day) & Q(date__month=date.month) & Q(date__year=date.year))
+        kwargs['expenses'] = Expenses.objects.filter(Q(date__day=date.day) & Q(date__month=date.month) & Q(date__year=date.year))
+        return super().get_context_data(**kwargs)
+
+
+class MonthSummeryList(TemplateView):
+    template_name = 'loans_admin/month_summery_list.html'
+
+    def get(self, request, *args, **kwargs):
+        previous_year = None
+        year = None
+        show_previous_year = kwargs['show_previous_year']
+        if show_previous_year == 0:
+            print(show_previous_year)
+            year = datetime.today().year
+            previous_year = year - 1
+        if show_previous_year == 1:
+            print('take me back in time')
+            year = datetime.today().year - 1
+            previous_year = year - 1
+        #year = datetime.datetime.today().year
+        #previous_year = year - 1
+        months = []
+
+        # show last month of last year
+        last_december = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=12) &
+                                         Q(date__year=previous_year))
+        if last_december.count() > 0:
+            months.append(('December', 12, previous_year))
+
+        january = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=1) &
+                                         Q(date__year=year))
+        if january.count() > 0:
+            months.append(('January', 1, year))
+
+        february = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=2) &
+                                         Q(date__year=year))
+        if february.count() > 0:
+            months.append(('February', 2, year))
+
+        march = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=3) &
+                                         Q(date__year=year))
+        if march.count() > 0:
+            months.append(('March', 3, year))
+
+        april = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=4) &
+                                         Q(date__year=year))
+        if april.count() > 0:
+            months.append(('April', 4, year))
+
+        may = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=5) &
+                                         Q(date__year=year))
+        if may.count() > 0:
+            months.append(('May', 5, year))
+
+        june = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=6) &
+                                         Q(date__year=year))
+        if june.count() > 0:
+            months.append(('June', 6, year))
+
+        july = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=7) &
+                                         Q(date__year=year))
+        if july.count() > 0:
+            months.append(('July', 7, year))
+
+        august = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=8) &
+                                         Q(date__year=year))
+        if august.count() > 0:
+            months.append(('August', 8, year))
+
+        september = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=9) &
+                                         Q(date__year=year))
+        if september.count() > 0:
+            months.append(('September', 9, year))
+
+        october = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=10) &
+                                         Q(date__year=year))
+        if october.count() > 0:
+            months.append(('October', 10, year))
+
+        november = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=11) &
+                                         Q(date__year=year))
+        if november.count() > 0:
+            months.append(('November', 11, year))
+
+        december = Summery.objects.filter(Q(station=request.user.station)&
+                                         Q(date__month=12) &
+                                         Q(date__year=year))
+        if december.count() > 0:
+            months.append(('December', 12, year))
+
+        return render(request, self.template_name, {'months': months, 'show_previous_year': show_previous_year})
+
+
+class MonthSummeryDetail(TemplateView):
+    template_name = 'loans_admin/month_summery_detail.html'
+
+    def get(self, request, *args, **kwargs):
+        month=kwargs['month']
+        year=kwargs['year']
+        month_name = kwargs['month_name']
+        # initialize the totals
+        total_payments = 0
+        total_expenditure = 0
+        total_pending_loans = 0
+        total_active_loans = 0
+        total_expected_cash = 0
+        total_cash_at_hand = 0
+        total_profits = 0
+
+        # get queryset
+        summaries = Summery.objects.filter(Q(date__month=month)&
+                                           Q(date__year=year)&
+                                           Q(station=self.request.user.station))
+
+        loans_list = Loan.objects.filter(Q(issue_date__month=month) &
+                                           Q(issue_date__year=year) &
+                                           Q(station=self.request.user.station))
+
+        payment_list = LoanPayment.objects.filter(Q(date__month=month)&
+                                              Q(date__year=year)&
+                                              Q(station=self.request.user.station))
+        expenses_list = Expenses.objects.filter(Q(date__month=month) &
+                                                   Q(date__year=year)&
+                                                   Q(station=self.request.user.station))
+
+
+        #Calculate Totals
+        for summary in summaries:
+            total_payments += summary.total_payments
+            total_pending_loans += summary.total_pending_loans
+            total_active_loans +=summary.total_active_loans
+            total_expenditure +=summary.total_expenditure
+            total_expected_cash += total_expected_cash
+            total_cash_at_hand += summary.total_cash_at_hand
+            total_profits +=summary.total_profits
+
+        cash_difference = total_cash_at_hand - total_expected_cash
+
+
+        context={'summaries': summaries, 'month_name': month_name, 'year': year, 'month':month,
+                 'total_payments':total_payments, 'total_expenditure': total_expenditure, 'total_pending_loans': total_pending_loans,
+                 'total_active_loans': total_active_loans,
+                 'total_expected_cash': total_expected_cash, 'total_cash_at_hand': total_cash_at_hand, 'cash_difference': cash_difference,
+                 'total_profits': total_profits, 'loans_list': loans_list, 'payment_list': payment_list, 'expenses_list': expenses_list}
+        return render(request, self.template_name, context)
+
+
+
 class IssueLoanNewCustomer(FormView):
     template_name = 'loans_admin/issue_loan.html'
 
