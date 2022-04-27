@@ -11,77 +11,67 @@
 {% block team_section %}{% endblock %}
 
 {% block portfolio_section %}
-    <!-- The Modals-->
-    <!--Deposit Instruction Modal-->
-     <div class="modal fade" id="depositInstruction" tabindex="-1" role="dialog" aria-labelledby="depositInstruction" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="depositInstructionTitle">Deposit Instructions</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="modalBody">
-                    <strong><br>{{ acount }} account <br>TO<br> Zanaco Bank Account Number:<br> {{ strive_account }}</strong>.
+    <!-- Modals for loans -->
+    {% if loans %}
+        {% for loan in loans %}
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" data-toggle="modal" class="btn btn-primary" id="confirmDeposit">Confirm</button>
+                 <!--Loan approval Modal-->
+                 <div class="modal fade" id="loanApprovalModel{{ loan.id }}" tabindex="-1" role="dialog" aria-labelledby="loanApprovalModel{{ loan.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="loanApprovalModelTitle">Loan Approval</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form method="post" action="">
+                                {% csrf_token %}
+                            <div class="modal-body" id="modalBody">
+
+                                    <p>Please Confirm Approval For Loan ID: {{ loan.id }}</p>
+                                    <p><strong>Requested Amount: K {{ loan.amount }}</strong></p>
+                                    <label for="{{ loan.id }}">Approved Amount:</label>
+                                    <input placeholder="Enter Approved Amount" required class="form-control" id="{{ loan.id }}" name="approved_amount" step="any" type="number">
+                                    <input type="hidden" name="loan_id" value="{{ loan.id }}">
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary" id="confirmLoan">Approve</button>
+                             </div>
+                            </form>
+                        </div>
                  </div>
-            </div>
+             </div>
 
-        </div>
-     </div>
+            <!-- Loan Rejection Form -->
+            <div class="modal fade" id="loanRejectionModel{{ loan.id }}" tabindex="-1" role="dialog" aria-labelledby="loanRejectionModelTitle{{ loan.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loanRejectionModelTitle{{ loan.id }}">Reject Loan Request</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <form method="post" action="{% url 'loans_admin:loan_reject' %}" id="loanRejectForm">
+                                {% csrf_token %}
+                                <p>Are You Sure You Want To Reject This Loan. <br>Loan ID: {{ loan.get_loan_id }}<br>Loan Amount: {{ loan.amount }}<br>Customer: {{ loan.customer }}</p>
+                                <br>
+                                <input type="hidden" name="loan_id" value="{{ loan.id }}">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-danger">Reject</button>
+                            </form>
+                        </div>
+                    </div>
 
-     <!--Deposit Form Modal-->
-     <div class="modal fade" id="depositModel" tabindex="-1" role="dialog" aria-labelledby="depositModelTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="depositModelTitle">Savings Deposit</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body text-center">
-                    <form method="post" action="" id="depositForm">
-                        {% csrf_token %}
-                        <input class="form-control" type="number" step="any" placeholder="Enter Deposit Amount" name="deposit_amount" required>
-                        <br>
-                        <button type="submit" class="btn btn-primary" id="make_deposit">Make Deposit</button>
-                    </form>
-                </div>
-            </div>
-
-        </div>
-     </div>
-
-    <!--withdraw Modal-->
-     <div class="modal fade" id="withdrawModal" tabindex="-1" role="dialog" aria-labelledby="withdrawModalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="withdrawModalTitle">Savings Withdraw</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body text-center">
-                    <span>Maximum You Can Withdraw Is K {{ available_balance }}</span>
-                    <form method="post" action="{% url 'investor:savings_withdraw' %}" id="depositForm">
-                        {% csrf_token %}
-                        <input type="hidden" name="available_balance" value="{{ available_balance }}">
-                        <input class="form-control" type="number" step="any" placeholder="Enter Withdraw Amount" name="withdraw_amount" required>
-                        <br>
-                        <button type="submit" class="btn btn-primary" id="withdraw">Withdraw</button>
-                    </form>
                 </div>
             </div>
-
-        </div>
-     </div>
+        {% endfor %}
+    {% endif %}
     <!-- End The Modals-->
 
     <section id="services" class="services "></section>
@@ -100,43 +90,47 @@
           </div>
         </div>
 
-         <div class="row">
+
          {% if loans %}
              {% for loan in loans %}
+                 <!--Page renderings -->
+                 <div class="row">
                   <div class="col-md-12">
                     <div class="card demo icon">
                       <div class="card-header">
                         <h5 class="card-title">{{ customer.name }}</h5>
                         <h6 class="card-category">
                             <strong>
-                            NRC: {{ customer.nrc }}<br>
-                            D.O.B: K {{ customer.dob }}<br>
-                            Gender: {{ customer.get_sex_display }}<br>
-                            Address: K {{ customer.address }}<br>
-                            Business Type: {{ customer.business_type }}
-                            Trading Area: {{ customer.trading_area }}
+                            Customer: {{ loan.customer }}<br>
+                            Amount:  {{ loan.amount }}<br>
+                            Application Date: {{ loan.application_date }}<br>
+                            Rate: {{ loan.get_interest_percentage }}<br>
+                            Term: {{ loan.get_term_display }}<br>
+                            Payments: {{ loan.get_payment_frequency_display }}
                             </strong>
 
                         </h6>
                       </div>
                     <div class="card-footer">
-                        <a href="" class="btn btn-primary">Approve Loan</a><!--MODEL-->
-                        <a href="3" class="btn btn-info">Details</a><!--modal-->
+                        <button  class="btn btn-primary" data-toggle="modal" data-target="#loanApprovalModel{{ loan.id }}">Approve Loan</button><!--MODEL-->
+                        <button data-toggle="modal" data-target="#loanRejectionModel{{ loan.id }}" class="btn btn-danger">Reject Loan</button><!--modal-->
                     </div>
                     </div>
                   </div>
+                 </div>
+                 <br>
              {% endfor %}
          {% else %}
+             <div class="row">
              <div class="col-md-auto col-lg-12 col-sm-12 text-center">
                 <div>
                     <h5 class="text-danger">You Have No Pending Loans Yet...</h5>
                 </div>
              </div>
+             </div>
 
             {% endif %}
 
-
-        </div>
       </div>
 
     </section><!-- End Portfolio Section -->
@@ -144,7 +138,6 @@
     {% endblock portfolio_section %}
 
 {% block javascript %}
-    <script src="{% static 'investor/js/strive.js' %}" type="module"></script>
 {% endblock %}
 
 {% block about_section %}{% endblock %}

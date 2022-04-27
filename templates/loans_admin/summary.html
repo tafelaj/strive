@@ -13,7 +13,35 @@
 
 
 {% block portfolio_section %}
+    <!--Expense Modal-->
+                 <div class="modal fade" id="expenseModel" tabindex="-1" role="dialog" aria-labelledby="expenseModel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="expenseModelTitle">Record Expenses</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form method="post" action="">
+                                {% csrf_token %}
+                            <div class="modal-body" id="modalBody">
+                                    <label for="amount">Enter Amount:</label>
+                                    <input placeholder="Enter Amount" required class="form-control" name="amount" step="any" type="number" id="amount"><br>
+                                    <label for="description">Enter Description:</label>
+                                    <input placeholder="Enter Description" required class="form-control" name="description" id="description">
+                                    <input type="hidden" name="expense" value="true">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                             </div>
+                            </form>
+                        </div>
+                     </div>
+                </div>
     <section id="services" class="services "></section>
+    {% if opening_balance %}
      <!-- ======= Portfolio Section ======= -->
     <section id="portfolio" class="portfolio">
       <div class="container" data-aos="fade-up">
@@ -36,7 +64,7 @@
             <div class="card demo-icons">
               <div class="card-header">
                 <h5 class="card-title">Loans Issued </h5>
-                  <p class="card-category">List of all* Issued Loans today</p>
+                  <p class="card-category">List of all Issued Loans today</p>
               </div>
                <div class="card-body">
                    {% if loans %}
@@ -45,10 +73,9 @@
                     <thead>
 						<tr>
 							<th>No.</th>
+                            <th>Customer</th>
 							<th>Amount</th>
-							<th>Customer</th>
-                            <th>Amount Paid</th>
-							<th>Balance</th>
+							<th>Amount To Pay</th>
 						</tr>
 					</thead>
 
@@ -56,10 +83,9 @@
                     {% for loan in loans %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-							<td>{{ loan.amount }}</td>
 							<td>{{ loan.customer }}</td>
-							<td>{{ loan.get_total_payments}}</td>
-                            <td>{{ loan.get_balance }}</td>
+                            <td>{{ loan.amount }}</td>
+							<td>{{ loan.get_total_amount}}</td>
 						</tr>
 
                     {% endfor %}
@@ -77,7 +103,8 @@
                </div>
 
                 <p class="card-footer">
-                   <strong>Grand Total K {{ loans_and_profit }}</strong> <br>
+                   <strong>Total Pending: K {{ pending_loans_total }}</strong> <br>
+                    <strong>Total Approved: K {{ approved_loans_total }}</strong>
                 </p>
             </div>
           </div>
@@ -90,36 +117,36 @@
             <div class="card demo-icons">
               <div class="card-header">
                 <h5 class="card-title">Loan Payments</h5>
-                  <p class="card-category">list of Active Loans</p>
+                  <p class="card-category"><strong>Total: K {{ payments_total }}</strong></p>
               </div>
                 <div class="card-body">
-                {% if payments %}
+                {% if today_payments %}
                     <div class="table-responsive">
-				<table class="table table-striped">
-                    <thead>
-						<tr>
-							<th>No.</th>
-							<th>Amount</th>
-							<th>Customer</th>
-                            <th>Amount Paid</th>
-							<th>Balance</th>
-						</tr>
-					</thead>
+                         <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Amount</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
 
-					<tbody id="inv_tbody">
-                    {% for loan in loans %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-							<td>{{ loan.amount }}</td>
-							<td>{{ loan.customer }}</td>
-							<td>{{ loan.get_total_payments}}</td>
-                            <td>{{ loan.get_balance }}</td>
-						</tr>
+                            <tbody id="inv_tbody">
+                            {% for payment in today_payments %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ payment.amount | floatformat:2 }}</td>
+                                    <td>{{ payment.loan.customer }}</td>
+                                    <td>{{ payment.date }}</td>
+                                    <td>{{ payment.balance | floatformat:2 }}</td>
+                                </tr>
 
-                    {% endfor %}
-					</tbody>
-				</table>
-			</div>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 {% else %}
                     <div class="col-md-auto col-lg-12 col-sm-12 text-center">
                 <div>
@@ -140,7 +167,9 @@
             <div class="card demo-icons">
               <div class="card-header">
                 <h5 class="card-title">Daily Expenses</h5>
-                  <p class="card-category">Add Any Expenses Paid For Today</p>
+                  <p class="card-category">Add Any Expenses Paid For Today<br>
+                      <strong>Total: K {{ expenses_total }}</strong><br>
+                  </p>
               </div>
                 <div class="card-body">
                 {% if expenses %}
@@ -151,7 +180,6 @@
 							<th>No.</th>
 							<th>Amount</th>
 							<th>Details</th>
-                            <th>Date/Time</th>
 							<th>Recorded By</th>
 						</tr>
 					</thead>
@@ -160,10 +188,9 @@
                     {% for expense in expenses %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-							<td>{{ loan.amount }}</td>
-							<td>{{ loan.customer }}</td>
-							<td>{{ loan.get_total_payments}}</td>
-                            <td>{{ loan.get_balance }}</td>
+							<td>{{ expense.amount }}</td>
+							<td>{{ expense.description }}</td>
+                            <td>{{ expense.user }}</td>
 						</tr>
 
                     {% endfor %}
@@ -178,17 +205,99 @@
              </div>
                 {% endif %}
                 </div>
-            <div class="card-footer">
-                <a href="" class="btn btn-success">Add Expense</a>
+                {% if opening_balance.closed %}
+                {% else %}
+                    <div class="card-footer">
+                <button data-toggle="modal" data-target="#expenseModel" class="btn btn-success">Add Expense</button>
             </div>
+                {% endif %}
+
+            </div>
+          </div>
+        </div>
+
+      <br>
+      {% if opening_balance.closed %}
+      <div class="row">
+          <div class="col-md-12">
+            <div class="card demo-icons">
+              <div class="card-header">
+                <h5 class="card-title">Status As Of {{ opening_balance.date }}</h5>
+              </div>
+                <div class="card-body">
+                    <strong>Opening Balance: K {{ opening_balance.balance_brought_forward }}</strong><br>
+                    <strong>Expected Cash At Hand: K {{ expected_cash }}</strong><br>
+                    <strong>Actual Cash At Hand: K {{ opening_balance.total_cash_at_hand }}</strong><br>
+                    <strong>Daily Profit: K {{ opening_balance.total_profits }}</strong>
+
+                </div>
+
             </div>
           </div>
 
         </div>
+      {% else %}
+          <div class="row">
+          <div class="col-md-12">
+            <div class="card demo-icons">
+              <div class="card-header">
+                <h5 class="card-title">Closing Balance</h5>
+              </div>
+                <div class="card-body">
+                    <strong>Opening Balance: K {{ opening_balance.balance_brought_forward }}</strong><br>
+                    <strong>Expected Cash At Hand: K {{ expected_cash }}</strong><br><br>
+                    <form action="" method="post" class="text-center">
+                        {% csrf_token %}
+                        <input type="hidden" name="total_payments" value="{{ payments_total }}">
+                        <input type="hidden" name="total_expenditure" value="{{ expenses_total }}">
+                        <input type="hidden" name="total_pending_loans" value="{{ pending_loans_total }}">
+                        <input type="hidden" name="approved_loans_total" value="{{ approved_loans_total }}">
+                        <input type="hidden" name="total_expected_cash" value="{{ expected_cash }}">
+                        <input placeholder="Enter Cash At Hand" name="cash_at_hand" class="form-control" required type="number" min="0"><br>
+                        <button id="close_trading_button" class="btn btn-info" type="submit">Close Business</button>
+                    </form>
+                </div>
+
+            </div>
+          </div>
+
+        </div>
+      {% endif %}
       </div>
           <hr>
 
     </section><!-- End Portfolio Section -->
+    {% else %}
+
+        <!-- ======= Services Section ======= -->
+    <section id="services" class="services section-bg ">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h4>Opening Balance</h4>
+          <p>Enter The Balance Brought Forward</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 mt-2 mt-md-0"></div>
+          <div class="col-md-8 mt-4 mt-md-0">
+            <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
+              <i class="icofont-chart-bar-graph"></i>
+                <form method="post" action="{% url 'loans_admin:opening_balance' %}" class="text-center">
+                    {% csrf_token %}
+                    <label for="opening_bal">Enter Opening Balance:</label>
+                    <input type="number" step="any" class="form-control" required id="opening_bal" name="opening_bal">
+                    <br>
+                    <input type="submit" value="Save Opening Balance" class="btn btn-success">
+                </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Services Section -->
+
+    {% endif %}
     <section class="services"></section>
 
     {% endblock portfolio_section %}

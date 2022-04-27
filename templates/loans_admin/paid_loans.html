@@ -82,6 +82,56 @@
 
         </div>
      </div>
+    {% if loans %}
+        {% for loan in loans %}
+            <!--Loan Detail Modal-->
+     <div class="modal fade" id="loanDetail{{ loan.id }}" tabindex="-1" role="dialog" aria-labelledby="loanDetail{{ loan.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="depositInstructionTitle">Loan Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                <p>{{ loan.customer }}<br>{{ loan.customer.phone }}<br>{{ loan.customer.address }}</p>
+                <p>Loan Payments</p>
+                    <div class="table-responsive">
+				        <table class="table table-striped">
+                    <thead>
+						<tr>
+							<th>No.</th>
+							<th>Amount</th>
+							<th>Date</th>
+							<th>Balance</th>
+						</tr>
+					</thead>
+
+					<tbody id="inv_tbody">
+                    {% for payment in loan.loanpayment_set.all %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+							<td>{{ payment.amount | floatformat:2 }}</td>
+							<td>{{ payment.date }}</td>
+                            <td>{{ payment.balance | floatformat:2 }}</td>
+						</tr>
+
+                    {% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
+                 </div>
+            </div>
+
+        </div>
+     </div>
+        {% endfor %}
+    {% endif %}
     <!-- End The Modals-->
 
     <section id="services" class="services "></section>
@@ -100,43 +150,47 @@
           </div>
         </div>
 
-         <div class="row">
+
          {% if loans %}
              {% for loan in loans %}
+                 <div class="row">
                   <div class="col-md-12">
                     <div class="card demo icon">
                       <div class="card-header">
-                        <h5 class="card-title">{{ customer.name }}</h5>
+                        <h5 class="card-title">{{ loan.customer }}</h5>
                         <h6 class="card-category">
                             <strong>
-                            NRC: {{ customer.nrc }}<br>
-                            D.O.B: K {{ customer.dob }}<br>
-                            Gender: {{ customer.get_sex_display }}<br>
-                            Address: K {{ customer.address }}<br>
-                            Business Type: {{ customer.business_type }}
-                            Trading Area: {{ customer.trading_area }}
+                                Loan ID: {{ loan.get_loan_id }}<br>
+                            Loan Amount:  {{ loan.amount | floatformat:4 }}<br>
+                            Amount To Pay: K {{ loan.get_total_amount | floatformat:4 }}<br>
+                                Amount Paid: K {{ loan.get_total_payments  | floatformat:4 }}<br>
+                                Balance: K {{ loan.get_balance | floatformat:4 }}<br>
+                            Issue Date: {{ loan.issue_date }}<br>
+                            Rate: {{ loan.get_interest_percentage }}<br>
+                            Term: {{ loan.get_term_display }}<br>
+                            Payments: {{ loan.get_payment_frequency_display }}<br>
+                                Last Payment Date: {{ loan.loanpayment_set.last.date }}
                             </strong>
 
                         </h6>
                       </div>
                     <div class="card-footer">
-                        <a href="{% url 'loans_admin:payment_details' pk=customer.id %}" class="btn btn-primary">Make Payment</a><!--MODEL-->
-                        <a href="3" class="btn btn-info">Details</a><!--modal-->
+                        <button data-toggle="modal" data-target="#loanDetail{{ loan.id }}" class="btn btn-info">Details</button><!--modal-->
                     </div>
                     </div>
                   </div>
+                 </div><br>
              {% endfor %}
          {% else %}
-             <div class="col-md-auto col-lg-12 col-sm-12 text-center">
-                <div>
-                    <h5 class="text-danger">You Have No Fully Paid Loans Yet...</h5>
-                </div>
+             <div class="row">
+                 <div class="col-md-auto col-lg-12 col-sm-12 text-center">
+                    <div>
+                        <h5 class="text-danger">You Have No Fully Paid Loans Yet...</h5>
+                    </div>
+                 </div>
              </div>
 
             {% endif %}
-
-
-        </div>
       </div>
 
     </section><!-- End Portfolio Section -->

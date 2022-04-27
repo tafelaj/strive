@@ -108,10 +108,7 @@
                 <h5 class="card-title">{{ savings.user.get_full_name }}</h5>
                 <h6 class="card-category">
                     <strong>
-                    Cumulative Balance: K {{ cumulative_balance }}<br>
-                    Interest Earned: K{{ invoice.due_date }}<br>
-                    Total Balance: K {{ invoice.currency }} {{ invoice.get_invoice_total }}<br>
-                    Available Balance: K {{ available_balance }} {{ invoice.amount_paid }}
+                    Loan Payments For This Station
                     </strong>
 
                 </h6>
@@ -122,10 +119,12 @@
                     <thead>
 						<tr>
 							<th>No.</th>
+                            <th>Customer</th>
 							<th>Amount</th>
-							<th>Date Of Deposit</th>
-                            <th>Interest Earned</th>
-							<th>Status</th>
+							<th>Date</th>
+                            <th>Receiver</th>
+                            <th>Balance</th>
+
 						</tr>
 					</thead>
 
@@ -133,15 +132,19 @@
                     {% for payment in payments %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-							<td>{{ deposit.amount }}</td>
-							<td>{{ deposit.date }}</td>
-							<td>{{ deposit.get_interest_earned}}</td>
+							<td>{{ payment.loan.customer.name }} - {{ payment.loan.customer.phone }}</td>
+							<td>{{ payment.amount | floatformat:2}}</td>
+							<td>{{ payment.date}}</td>
+                            <td>{{ payment.received_by }}</td>
+                            <td>{{ payment.balance | floatformat:2 }}</td>
 						</tr>
 
                     {% endfor %}
 					</tbody>
 				</table>
 			</div>
+              <!--pagination-->
+        {% include 'partials/pagination.html' %}
 
               </div>
             </div>
