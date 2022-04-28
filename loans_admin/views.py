@@ -104,7 +104,7 @@ class LoansView(FormView):
     template_name = 'loans_admin/loan_list.html'
 
     def get(self, request, *args, **kwargs):
-        loans = Loan.objects.filter(Q(station=request.user.station) & Q(status='2'))
+        loans = Loan.objects.filter(Q(station=request.user.station) & Q(status='2')).order_by('-id')
 
         context = {'loans': loans,}
         return render(request, self.template_name, context)
@@ -142,7 +142,7 @@ class CompletedLoans(ListView):
     context_object_name = 'loans'
 
     def get_queryset(self):
-        q = Loan.objects.filter(Q(station=self.request.user.station) & Q(status='3'))
+        q = Loan.objects.filter(Q(station=self.request.user.station) & Q(status='3')).order_by('-issue_date')
         return q
 
 class SummaryView(FormView):
