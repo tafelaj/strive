@@ -15,6 +15,11 @@
                     <h2>Strive Login</h2>
                     <div class="separator separator-danger">✻</div>
                     <p class="description">Enter your Account Details Below To Login</p>
+                    {% if messages %}
+                        {% for message in messages %}
+                        <p class="text-danger"><strong>{{ message }}</strong></p>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
             <div class="row">

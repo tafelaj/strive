@@ -31,12 +31,9 @@ class Login(FormView):
             else:
                 return HttpResponseRedirect(reverse_lazy('investor:home'))
         else:
-            error = 'Your Account Was Not Found. Check Your Username and Password. ' \
-                    'Contact Your Admin If The Problem Persists.'
-            context = {
-                'error': error
-            }
-            return render(request, self.template_name, context)
+            messages.error(request, 'Your Account Was Not Found. Check Your Username and Password. '
+                    'Contact Your Admin If The Problem Persists.')
+            return render(request, self.template_name)
 
     def get(self, request, *args, **kwargs):
         if request.user.is_anonymous:
