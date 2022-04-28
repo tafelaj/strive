@@ -8,7 +8,7 @@ from loans_admin import forms
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db import transaction
-from django.contrib.messages.views import SuccessMessageMixin
+#from django.contrib.messages.views import SuccessMessageMixin
 # Create your views here.
 
 

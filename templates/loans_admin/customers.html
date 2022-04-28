@@ -27,7 +27,7 @@
                         <div class="modal-body" id="modalBody">
 
                         {% if customer.loan_set.all|length > 0 %}
-                            {% for loan in customer.loan_set.all %}
+                            {% for loan in customer.loan_set.all reversed %}
                                 <p><strong>Loan ID{{ loan.get_loan_id }}</strong><br>Amount:{{ loan.amount }}
                                     <br>Repayment Amount:K {{ loan.get_total_amount }}
                                     <br>Issue Date: {{ loan.issue_date }}
