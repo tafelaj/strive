@@ -11,6 +11,7 @@ urlpatterns = [
     #payments
     path('payments/', views.PaymentsView.as_view(), name='payments'),
     path('payment/<int:pk>/detail/', views.PaymentsView.as_view(), name='payment_details'),
+    path('payments/pending/', views.PendingPayments.as_view(), name='pending_payments'),
     #path('payment/add/<int:loan_pk>/', views.MakePayment.as_view(), name='make_payment'),
     #customers
     path('customers/', views.CustomerView.as_view(), name='customers'),

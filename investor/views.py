@@ -9,6 +9,8 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from .models import Account, Deposit, Withdraw
 from loans.models import LoanAccount
+from Strive.decorators import user_is_investor
+from django.utils.decorators import method_decorator
 
 # Create your views here.
 class Landing(TemplateView):
@@ -59,6 +61,7 @@ class SignUpView(CreateView):
         return redirect('investor:user_create')
 
 
+@method_decorator(user_is_investor, name='get')
 class Home(TemplateView):
     template_name = 'investor/dash.html'
 
@@ -78,6 +81,8 @@ class Home(TemplateView):
         context = {'assets': assets, 'loans': loans, 'savings': savings}
         return render(request, self.template_name, context)
 
+
+@method_decorator(user_is_investor, name='get')
 class SavingsView(FormView):
     template_name = 'investor/savings.html'
 
@@ -128,6 +133,8 @@ class SavingsView(FormView):
             messages.error(request, 'We Could Not Process Your Deposit Request')
         return HttpResponseRedirect(reverse_lazy('investor:savings'))
 
+
+@method_decorator(user_is_investor, name='get')
 class SavingsWithdraw(FormView):
     def post(self, request, *args, **kwargs):
         # create a withdraw request

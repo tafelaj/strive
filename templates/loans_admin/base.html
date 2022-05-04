@@ -88,7 +88,15 @@
                 </ul>
             </li>
 
-            <li><a href="{% url 'loans_admin:payments' %}">Payments</a></li>
+            <li class="drop-down"><a href="">Payments</a>
+                <ul>
+                    <li><a href="{% url 'loans_admin:pending_payments' %}">Pending For Today</a> </li>
+                    <li><a href="{% url 'loans_admin:payments' %}">All Payments</a></li>
+
+                </ul>
+            </li>
+
+
             <li><a href="{% url 'loans_admin:summary' %}">Summary</a></li>
             <li class="drop-down"><a href="">Customers</a>
                 <ul>

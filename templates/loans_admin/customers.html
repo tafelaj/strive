@@ -115,7 +115,7 @@
                             D.O.B:  {{ customer.date_of_birth }}<br>
                             Gender: {{ customer.get_sex_display }}<br>
                             Address:  {{ customer.address }}<br>
-                                Phone: {{ customer.phone }}<br>
+                                Phone: <a class="text-dark" href="tel:{{ customer.phone }}">{{ customer.phone }}</a><br>
                                 {% if customer.email %}
                                 Email: {{ customer.email }}<br>
                                 {% endif %}

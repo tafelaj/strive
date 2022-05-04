@@ -11,6 +11,43 @@
 {% block team_section %}{% endblock %}
 
 {% block portfolio_section %}
+
+    {% if re_enter_message %}
+        <!--Loan re-approval Modal-->
+            <div class="modal fade show" id="loanPaymentMode{{ loan.id }}" tabindex="-1" aria-labelledby="loanPaymentMode{{ loan.id }}" style="display: block; padding-right: 17px;" aria-modal="true" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="loanPaymentModelTitle">Loan {{ loan.get_loan_id }} Payment</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form method="post" action="" id="{{ loan.id }}">
+                                {% csrf_token %}
+                            <div class="modal-body" id="modalBody">
+                                <p class="text-danger"><strong>{{ re_enter_message }}</strong></p>
+                                    <label for="{{ loan_id }}">Enter Payment Amount:<span class="asteriskField">*</span></label>
+                                    <input placeholder="Enter Amount" required class="form-control" id="{{ loan.id }}"
+                                           name="amount" step="any" type="number" max="{{ balance }}" value="{{ amount }}">
+                                <br>
+                                <input type="hidden" name="loan_id" value="{{ loan_id }}">
+                                <input type="hidden" name="payment_type" value="{{ payment_type }}">
+                                <input type="hidden" name="confirm_re_pay" value="true">
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <a type="button" class="btn btn-secondary" href="{% url 'loans_admin:active_loans' %}">Cancel</a>
+                                <button type="submit" class="btn btn-warning" id="confirmLoan">Yes, I Know What I am Doing</button>
+                             </div>
+                            </form>
+                        </div>
+                 </div>
+             </div>`
+    {% endif %}
+
+
     {% if loans %}
         {% for loan in loans %}
             <!-- Modals for loans -->
@@ -133,7 +170,7 @@
 
          {% if loans %}
              {% for loan in loans %}
-                 <div class="row">
+                 <div class="row" id="{{ loan.id }}">
                   <div class="col-md-12">
                     <div class="card demo icon">
                       <div class="card-header">

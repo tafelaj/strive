@@ -57,6 +57,28 @@ class PaymentsView(ListView):
         payments = LoanPayment.objects.filter(Q(station=self.request.user.station)).order_by('-id')
         return payments
 
+class PendingPayments(ListView):
+    template_name = 'loans_admin/pending_payments.html'
+    model = Loan
+    context_object_name = 'loans'
+
+    def get_queryset(self):
+
+        loans = Loan.objects.filter(Q(station=self.request.user.station) & Q(status='2'))
+        all_payments = LoanPayment.objects.filter(Q(station=self.request.user.station) &
+                                                  Q(date__day=datetime.today().day) &
+                                                  Q(date__month=datetime.today().month) &
+                                                  Q(date__year=datetime.today().year))
+
+        for payment in all_payments:
+            loans.exclude(Q(pk=payment.loan.id) & Q(issue_date__year=datetime.today().year) &
+                          Q(issue_date__month=datetime.today().month) & Q(issue_date__day=datetime.today().day))
+        return loans
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        kwargs['pending'] = True
+        return super().get_context_data(**kwargs)
+
 # payments end ....
 
 
@@ -110,24 +132,60 @@ class LoansView(FormView):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
+        # date
+        date = datetime.today()
+
         #record payment
         amount = request.POST.get('amount')
         loan_id = request.POST.get('loan_id')
         payment_type = request.POST.get('payment_type')
+        confirm_re_pay = request.POST.get('confirm_re_pay')
+        print(confirm_re_pay)
         try:
             loan = Loan.objects.get(pk=loan_id)
-            payment = LoanPayment.objects.create(loan=loan, received_by=request.user, amount=amount,
+            balance = loan.get_balance()
+
+             # check if there is a payment for this loan for today
+            existing_payments = LoanPayment.objects.filter(Q(loan=loan) & Q(date__day=date.day)& Q(date__month=date.month) & Q(date__year=date.year))
+
+            if existing_payments.count() > 0:
+                # if user knows what they are doing
+                if confirm_re_pay:
+                    # make the payment
+                    payment = LoanPayment.objects.create(loan=loan, received_by=request.user, amount=amount,
+                                                         station=request.user.station, payment_type=payment_type)
+                    payment.balance = loan.get_balance()
+                    payment.save()
+                    if loan.get_balance() == 0:
+                        loan.status = '3'
+                        loan.save()
+                        messages.info(request, 'Loan Has Been Paid In full')
+                    messages.success(request, 'Payment Of K{} For Loan ID {} Recorded Successfully'.format(amount,
+                                                                                                           loan.get_loan_id()))
+                else:
+                    # render template with warning
+                    context = {'re_enter_message': 'A Payment For This Loan Has Already been Made Today, '
+                                                    'Are you sure you want to add another?', 'amount': amount,
+                                'loan_id': loan_id, 'payment_type': payment_type, 'balance': balance}
+                    return render(request, self.template_name, context)
+
+            else:
+                #make the payment if none exists
+                payment = LoanPayment.objects.create(loan=loan, received_by=request.user, amount=amount,
                                                  station=request.user.station, payment_type=payment_type)
-            payment.balance = loan.get_balance()
-            payment.save()
-            if loan.get_balance() == 0:
-                loan.status = '3'
-                loan.save()
-                messages.info(request, 'Loan Has Been Paid In full')
+                payment.balance = loan.get_balance()
+                payment.save()
+                if loan.get_balance() == 0:
+                    loan.status = '3'
+                    loan.save()
+                    messages.info(request, 'Loan Has Been Paid In full')
+                messages.success(request, 'Payment Of K{} For Loan ID {} Recorded Successfully'.format(amount,
+                                                                                                       loan.get_loan_id()))
+
         except Loan.DoesNotExist:
             messages.error(request, 'I couldn\'t The Loan For Some Reason. I must be drunk')
             return HttpResponseRedirect(reverse_lazy('loans_admin:active_loans'))
-        messages.success(request, 'Payment Of K{} For Loan ID {} Recorded Successfully'.format(amount, loan.get_loan_id()))
+
         return redirect('loans_admin:loan_details', pk=loan.id)
 
 

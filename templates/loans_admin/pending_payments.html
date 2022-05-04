@@ -67,8 +67,8 @@
       <div class="container" data-aos="fade-up">
 
         <div class="section-title">
-          <h3>Payments</h3>
-            <small>✻ Payments for {{ request.user.station }}✻ <br>{{ request.user.get_full_name }}</small>
+          <h3>Pending Payments</h3>
+            <small>✻ Today's Pending Payments for {{ request.user.station }}✻ <br>{{ request.user.get_full_name }}</small>
           </div>
 
         <div class="row" data-aos="fade-up" data-aos-delay="100">
@@ -78,14 +78,14 @@
         </div>
 
          <div class="row">
-         {% if payments %}
+         {% if pending %}
              <div class="col-md-12">
             <div class="card demo icon">
               <div class="card-header">
                 <h5 class="card-title">{{ savings.user.get_full_name }}</h5>
                 <h6 class="card-category">
                     <strong>
-                    Loan Payments For This Station
+                    Pending Loan Payments For This Station For Today
                     </strong>
 
                 </h6>
@@ -97,23 +97,21 @@
 						<tr>
 							<th>No.</th>
                             <th>Customer</th>
+							<th>Number</th>
 							<th>Amount</th>
-							<th>Date</th>
-                            <th>Receiver</th>
-                            <th>Balance</th>
+                            <th>Loan Balance</th>
 
 						</tr>
 					</thead>
 
 					<tbody id="inv_tbody">
-                    {% for payment in payments %}
+                    {% for loan in loans %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-							<td>{{ payment.loan.customer.name }} - {{ payment.loan.customer.phone }}</td>
-							<td>{{ payment.amount | floatformat:2}}</td>
-							<td>{{ payment.date}}</td>
-                            <td>{{ payment.received_by }}</td>
-                            <td>{{ payment.balance | floatformat:2 }}</td>
+							<td>{{ loan.customer.name }}</td>
+							<td>{{ loan.customer.phone }}</td>
+							<td>{{ loan.get_balance_daily_payment|floatformat:2}}</td>
+                            <td>{{ loan.get_balance | floatformat:2}}</td>
 						</tr>
 
                     {% endfor %}
@@ -129,7 +127,7 @@
          {% else %}
              <div class="col-md-auto col-lg-12 col-sm-12 text-center">
                 <div>
-                    <h5 class="text-danger">You Have No Payments Yet.<br> Payments Will Show Up Here As You Record Them.</h5>
+                    <h5 class="text-danger">You Have No Pending Payments</h5>
                 </div>
              </div>
 
