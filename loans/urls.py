@@ -7,4 +7,5 @@ app_name = 'loans'
 
 urlpatterns = [
     path('', views.Home.as_view(), name='home'),
+    path('request/', views.RequestLoan.as_view(), name='request_loan'),
 ]

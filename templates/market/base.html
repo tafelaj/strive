@@ -67,8 +67,9 @@
           <nav class="nav-menu d-none d-lg-block">
             <ul>
 
-            <li {% if request.path == home %} class="active" {% endif%}><a href="{% url 'investor:home' %}">Dashboard</a></li>
+            <li {% if request.path == home %} class="active" {% endif%}><a href="{% url 'market:market_dash' %}">Dashboard</a></li>
 
+            <li><a href="{% url 'market:market' %}">Market Place</a></li>
             <li class="drop-down"><a href="">Accounts</a>
                 <ul>
                     <li class="drop-down"><a href="">Payment Accounts</a>
@@ -81,10 +82,9 @@
                 </ul>
             </li>
 
-            <li><a href="{% url 'investor:savings' %}">Savings</a></li>
-
-            <li><a href="{% url 'loans:home' %}">Loans</a></li>
-            <li><a href="{% url 'market:market_dash' %}">Market</a></li>
+            <li><a href="{% url 'market:Portfolio' %}">Portfolio</a></li>
+            <li><a href="{% url 'investor:home' %}">Cooperative Home</a></li>
+            <li><a href="{% url 'market:help' %}">Get Help</a></li>
 
             </ul>
           </nav><!-- .nav-menu -->

@@ -115,7 +115,7 @@
                             D.O.B:  {{ customer.date_of_birth }}<br>
                             Gender: {{ customer.get_sex_display }}<br>
                             Address:  {{ customer.address }}<br>
-                                Phone: <a class="text-dark" href="tel:{{ customer.phone }}">{{ customer.phone }}</a><br>
+                                Phone: {{ customer.phone }} <a class="text-dark" href="tel:{{ customer.phone }}"><span>&phone;</span></a><br>
                                 {% if customer.email %}
                                 Email: {{ customer.email }}<br>
                                 {% endif %}
@@ -127,6 +127,7 @@
                       </div>
                     <div class="card-footer">
                         <button data-toggle="modal" data-target="#loanDetail{{ customer.id }}" class="btn btn-info">Loans</button>
+                        <a href="{% url 'loans_admin:loans_admin_home' %}" class="btn btn-warning">Update</a>
                     </div>
                     </div>
                   </div>

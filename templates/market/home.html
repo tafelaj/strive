@@ -1,0 +1,126 @@
+{% extends 'market/base.html' %}
+{% block title %}Savings{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block testimonials_section%}{% endblock %}
+
+{% block hero %}{% endblock %}
+{% block services_section %}{% endblock %}
+{% block counts_section %}{% endblock %}
+{% block pricing_section %}{% endblock %}
+{% block team_section %}{% endblock %}
+
+{% block portfolio_section %}
+    <section id="services" class="services "></section>
+     <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container">
+
+        <div class="section-title">
+          <h3>Asset Market</h3>
+            <small>✻ A Place you can buy and sell ownership of Farm Assets ✻ <br>{{ request.user.get_full_name }}</small>
+          </div>
+
+        <div class="row">
+          <div class="col-lg-12 d-flex justify-content-center">
+              {% include 'partials/messages.html' %}
+
+          </div>
+        </div>
+
+        {% if assets %}
+         <div class="row">
+             <div class="col-md-12">
+            <div class="card demo icon">
+              <div class="card-header">
+                <h5 class="card-title">Invoice {{ invoice.get_invoice_number }}</h5>
+                <h6 class="card-category">
+                    <strong>
+                    Customer: {{ invoice.customer }}<br>
+                    Due Date: {{ invoice.due_date }}<br>
+                    Amount Due: {{ invoice.currency }} {{ invoice.get_invoice_total }}<br>
+                    Amount Paid: {{ invoice.currency }} {{ invoice.amount_paid }}
+                    </strong>
+
+                </h6>
+              </div>
+              <div class="card-body">
+                  <div class="table-responsive">
+				<table class="table table-striped">
+                    <thead>
+						<tr>
+							<th>No.</th>
+							<th>Product</th>
+							<th>Quantity</th>
+                            <th>Discount</th>
+							<th>Amount</th>
+						</tr>
+					</thead>
+
+					<tbody id="inv_tbody">
+                    {% for item in line_items %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+							<td>{{ item.product }}</td>
+							<td>{{ item.quantity }}</td>
+							<td>{{ item.discout}}</td>
+                            <td>{{ item.get_total}}</td>
+						</tr>
+
+                    {% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+              </div>
+
+              <div class="card-footer">
+                  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmationModal" id="markAsPaid">Make Payment</button>
+              </div>
+            </div>
+          </div>
+         {% else %}
+             <div class="col-md-12 col-lg-12 col-sm-12 text-center">
+                <div>
+                    <h5 class="text-info">You Have No Assets.<br> Use The Buy Assets Button Below to Buy From The Market.</h5>
+                </div>
+             </div>
+             </div>
+
+             <br>
+         <div class="row">
+             <div class="col-md-12 col-lg-12 col-sm-12 text-center">
+             <a class="btn btn-info" href="{% url 'market:market' %}">Buy Assets</a><br>
+             <small>The Asset Market Place is subject to the terms and conditions described <a href="">here</a>. </small>
+             </div>
+
+
+        </div>
+      {% endif %}
+
+      <hr style="height: auto">
+      <div class="row">
+             <div class="col-md-12 col-lg-12 col-sm-12 text-center">
+                 <a class="header"><strong>Recent Asset Sells</strong></a><br>
+             <small>List of recent sells and buys on the market place.<br>Click <a href="{% url 'market:market' %}">here</a> to go to the market place. </small>
+             {% if recent_transacions %}
+             {% else %}
+                 <br><br>
+                 <h5 class="text-info">No recent transactions on the market place.</h5>
+             {% endif %}
+
+             </div>
+        </div>
+
+      </div>
+
+    </section><!-- End Portfolio Section -->
+    <section class="services"></section>
+    {% endblock portfolio_section %}
+
+{% block about_section %}{% endblock %}
+{% block tabs_section %}{% endblock %}
+{% block clients_section %}{% endblock %}
+{% block faq %}{% endblock %}
+{% block contact_section %}{% endblock %}
+{% block footer %}{% endblock %}

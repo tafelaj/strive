@@ -29,56 +29,47 @@
         </div>
 
          <div class="row">
-         {% if savings %}
-             <div class="col-md-12">
-            <div class="card demo icon">
-              <div class="card-header">
-                <h5 class="card-title">Invoice {{ invoice.get_invoice_number }}</h5>
-                <h6 class="card-category">
-                    <strong>
-                    Customer: {{ invoice.customer }}<br>
-                    Due Date: {{ invoice.due_date }}<br>
-                    Amount Due: {{ invoice.currency }} {{ invoice.get_invoice_total }}<br>
-                    Amount Paid: {{ invoice.currency }} {{ invoice.amount_paid }}
-                    </strong>
+         {% if loans %}
+             {% for loan in loans %}
+                 <!--Page renderings -->
 
-                </h6>
-              </div>
-              <div class="card-body">
-                  <div class="table-responsive">
-				<table class="table table-striped">
-                    <thead>
-						<tr>
-							<th>No.</th>
-							<th>Product</th>
-							<th>Quantity</th>
-                            <th>Discount</th>
-							<th>Amount</th>
-						</tr>
-					</thead>
+                  <div class="col-md-12">
+                    <div class="card demo icon">
+                      <div class="card-header">
+                        <h5 class="card-title">{{ customer.name }}</h5>
+                        <h6 class="card-category">
+                            <strong>
+                                <h4>Loan: {{ loan }}</h4>
+                                Amount:  ZMW {{ loan.amount }}<br>
+                                Interest: ZMW {{ loan.get_interest_amount }}<br>
+                                Repayment Total: ZMW {{ loan.get_total_amount }}<br>
+                                Application Date: {{ loan.application_date }}<br>
+                                Rate: {{ loan.get_interest_percentage }}<br>
 
-					<tbody id="inv_tbody">
-                    {% for item in line_items %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-							<td>{{ item.product }}</td>
-							<td>{{ item.quantity }}</td>
-							<td>{{ item.discout}}</td>
-                            <td>{{ item.get_total}}</td>
-						</tr>
+                                Term: {{ loan.get_term_display }}<br>
+                                Status: {{ loan.get_status_display }}<br>
+                                {% if loan.status == '2' %}
+                                    {% if loan.disbursed %}
+                                        Disbursement: Funds disbursed
+                                    {% else %}
+                                        Disbursement: Pending
+                                    {% endif %}
+                                {% endif %}
+                            </strong>
 
-                    {% endfor %}
-					</tbody>
-				</table>
-			</div>
-
-              </div>
-
-              <div class="card-footer">
-                  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmationModal" id="markAsPaid">Make Payment</button>
-              </div>
-            </div>
-          </div>
+                        </h6>
+                      </div>
+                    <div class="card-footer">
+                    {% if loan.status == '2' and loan.disbursed %}
+                        <button  class="btn btn-primary" data-toggle="modal" data-target="#loanApprovalModel{{ loan.id }}">Make Payment</button><!--MODEL-->
+                        {% elif loan.status == '1' %}
+                        <button data-toggle="modal" data-target="#loanRejectionModel{{ loan.id }}" class="btn btn-danger">Cancel Loan</button><!--modal-->
+                        {% endif %}
+                    </div>
+                    </div>
+                  </div>
+                 <br>
+             {% endfor %}
          {% else %}
              <div class="col-md-auto col-lg-12 col-sm-12 text-center">
                 <div>
@@ -90,7 +81,7 @@
              <br>
          <div class="row">
              <div class="col-md-12 col-lg-12 col-sm-12 text-center">
-             <a class="btn btn-info">Request Loan</a><br>
+             <a class="btn btn-info" href="{% url 'loans:request_loan' %}">Request Loan</a><br>
              <small>Our Loans are subject to the terms and conditions described <a href="">here</a>. </small>
              </div>
 

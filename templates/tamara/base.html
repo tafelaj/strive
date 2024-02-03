@@ -67,24 +67,57 @@
           <nav class="nav-menu d-none d-lg-block">
             <ul>
 
-            <li {% if request.path == home %} class="active" {% endif%}><a href="{% url 'investor:home' %}">Dashboard</a></li>
+            <li {% if request.path == home %} class="active" {% endif%}><a href="{% url 'tamara:tamara_dash' %}">Dashboard</a></li>
 
-            <li class="drop-down"><a href="">Accounts</a>
+            <li class="drop-down"><a href="">Loans</a>
                 <ul>
-                    <li class="drop-down"><a href="">Payment Accounts</a>
+                    <li class="drop-down"><a href="">Issue Loan</a>
                         <ul>
-                        <li><a href="">Add Payment Account</a></li>
-                        <li><a href="">View Accounts</a></li>
+                            <li><a href="{% url 'loans_admin:new_loan_new' %}">New Customer</a> </li>
+                            <li><a href="{% url 'loans_admin:new_loan_existing' %}">Existing Customer</a> </li>
                         </ul>
                     </li>
-                    <li><a href="">Update User Profile</a></li>
+
+                    <li class="drop-down"><a href="">Loan Lists</a>
+                        <ul>
+                            <li><a href="{% url 'loans_admin:active_loans' %}">Active loans</a></li>
+                            <li><a href="{% url 'loans_admin:pending_loans' %}">Pending Loans</a></li>
+                            <li><a href="{% url 'loans_admin:completed_loans' %}">Paid Loans</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </li>
 
-            <li><a href="{% url 'investor:savings' %}">Savings</a></li>
+            <li class="drop-down"><a href="">Payments</a>
+                <ul>
+                    <li><a href="{% url 'loans_admin:pending_payments' %}">Pending For Today</a> </li>
+                    <li><a href="{% url 'loans_admin:payments' %}">All Payments</a></li>
 
-            <li><a href="{% url 'loans:home' %}">Loans</a></li>
-            <li><a href="{% url 'market:market_dash' %}">Market</a></li>
+                </ul>
+            </li>
+
+
+            <li><a href="{% url 'loans_admin:summary' %}">Summary</a></li>
+            <li class="drop-down"><a href="">Customers</a>
+                <ul>
+                    <li><a href="{% url 'loans_admin:customers' %}">List Customer</a></li>
+                </ul>
+            </li>
+
+            <li class="drop-down"><a href="">Accounts</a>
+                <ul>
+                    <li><a href="{% url 'loans_admin:stations' %}">Stations</a></li>
+                    <li><a href="#">User Profile</a></li>
+                    <li><a href="#">Add User Account</a></li>
+                </ul>
+            </li>
+
+            <li class="drop-down"><a href="">More</a>
+                <ul>
+                    <li><a href="{% url 'loans_admin:summary_list' %}">Previous Summaries</a></li>
+                    <li><a href="{% url 'loans_admin:month_summary_list' show_previous_year=0 %}">Month Summaries</a></li>
+                </ul>
+            </li>
 
             </ul>
           </nav><!-- .nav-menu -->

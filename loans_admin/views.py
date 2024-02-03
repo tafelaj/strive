@@ -1,6 +1,9 @@
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.views.generic import TemplateView, ListView, FormView, DetailView
-from loans_admin.models import Loan, LoanPayment, Customer, Expenses, Summery
+
+import loans.forms
+from loans_admin.models import Customer, Expenses, Summery
+from loans.models import Loan, LoanPayment
 from investor.models import Station
 from django.db.models import Q
 from datetime import datetime
@@ -97,7 +100,7 @@ class PendingLoansView(FormView):
     template_name = 'loans_admin/pending_loan_list.html'
 
     def get(self, request, *args, **kwargs):
-        loans = Loan.objects.filter(Q(station=request.user.station) & Q(status='1')).order_by('-id')
+        loans = Loan.objects.filter(Q(status='1')).order_by('-id')
 
         context = {'loans': loans, }
         return render(request, self.template_name, context)
@@ -227,7 +230,7 @@ class SummaryView(FormView):
         # loans today
         loans = Loan.objects.filter(Q(station=request.user.station) &
                                     Q(issue_date__day=day) & Q(issue_date__month=month) &
-                                    Q(issue_date__year=year))
+                                    Q(issue_date__year=year)).exclude(status='3')
 
         approved_loans = loans.filter(status='2')
         approved_loans_total = 0
@@ -484,7 +487,7 @@ class IssueLoanNewCustomer(FormView):
         #new customer form
         customer_form = forms.CustomerForm()
         # new loan form
-        loan_form = forms.LoanForm()
+        loan_form = loans.forms.LoanForm()
 
         context={'customer_form': customer_form, 'loan_form': loan_form,}
         return render(request, self.template_name, context)
@@ -501,7 +504,7 @@ class IssueLoanNewCustomer(FormView):
             return HttpResponseRedirect(reverse_lazy('loans_admin:new_loan_new'))
 
         #save new customer loan
-        loan_form = forms.LoanForm(request.POST or None)
+        loan_form = loans.forms.LoanForm(request.POST or None)
         if loan_form.is_valid():
             loan = loan_form.save(commit=False)
             loan.customer = customer
@@ -521,7 +524,7 @@ class IssueLoanExistingCustomer(FormView):
 
     def get(self, request, *args, **kwargs):
         # new loan form
-        loan_form = forms.LoanForm()
+        loan_form = loans.forms.LoanForm()
 
         #get existing customers
         customers = Customer.objects.filter(station=request.user.station)
@@ -539,7 +542,7 @@ class IssueLoanExistingCustomer(FormView):
             return HttpResponseRedirect(reverse_lazy('loans_admin:new_loan_existing'))
 
         #save new customer loan
-        loan_form = forms.LoanForm(request.POST or None)
+        loan_form = loans.forms.LoanForm(request.POST or None)
         if loan_form.is_valid():
             loan = loan_form.save(commit=False)
             loan.customer = customer
@@ -604,3 +607,10 @@ class SaveOpeningBalance(FormView):
         summary.balance_brought_forward = opening_bal
         summary.save()
         return HttpResponseRedirect(reverse_lazy('loans_admin:summary'))
+
+class LoansUpdate():
+    pass
+
+
+class CustomerUpdate():
+    pass

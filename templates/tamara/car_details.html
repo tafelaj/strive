@@ -1,0 +1,106 @@
+{% extends 'tamara/base.html' %}
+{% block title %}Car Details{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block testimonials_section%}{% endblock %}
+
+{% block hero %}{% endblock %}
+{% block services_section %}{% endblock %}
+{% block counts_section %}{% endblock %}
+{% block pricing_section %}{% endblock %}
+{% block team_section %}{% endblock %}
+
+{% block who_we_are %}
+    Account RoundUp
+    actual balance
+    available balance
+{% endblock %}
+
+{% block portfolio_section %}
+    <section id="services" class="services "></section>
+     <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h3>Loan Details</h3>
+            <small>{{ request.user.get_full_name }} | {{ request.user.station }}</small>
+          </div>
+
+        <div class="row" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-lg-12 d-flex justify-content-center">
+              {% include 'partials/messages.html' %}
+
+          </div>
+        </div>
+
+         <div class="row">
+
+          <div class="col-md-12">
+            <div class="card demo-icons">
+              <div class="card-header">
+                <h5 class="card-title">{{ loan.customer }} </h5>
+                  <p class="card-category"><strong>Loan ID{{ loan.get_loan_id }}</strong><br>Amount:{{ loan.amount }}
+                                    <br>Repayment Amount:K {{ loan.get_total_amount }}
+                                    <br>Issue Date: {{ loan.issue_date }}
+                                    <br>Interest Rate: {{ loan.get_interest_percentage }}
+                                    <br>Status: {{ loan.get_status_display }}
+                                </p>
+              </div>
+               <div class="card-body">
+                   <p>Loan Payments</p>
+                    <div class="table-responsive">
+				        <table class="table table-striped">
+                    <thead>
+						<tr>
+							<th>No.</th>
+							<th>Amount</th>
+							<th>Date</th>
+							<th>Balance</th>
+						</tr>
+					</thead>
+
+					<tbody id="inv_tbody">
+                    {% for payment in loan.loanpayment_set.all %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+							<td>{{ payment.amount | floatformat:2 }}</td>
+							<td>{{ payment.date }}</td>
+                            <td>{{ payment.balance | floatformat:2 }}</td>
+						</tr>
+
+                    {% endfor %}
+					</tbody>
+				</table>
+			</div>
+               </div>
+
+
+            </div>
+          </div>
+
+         </div>
+      </div>
+          <hr>
+
+    </section><!-- End Portfolio Section -->
+    <section class="services"></section>
+
+    {% endblock portfolio_section %}
+
+{% block about_section %}{% endblock %}
+{% block tabs_section %}{% endblock %}
+{% block clients_section %}{% endblock %}
+{% block faq %}{% endblock %}
+{% block contact_section %}{% endblock %}
+{% block footer %}{% endblock %}
+
+
+
+
+<div class="modal-body" id="modalBody">
+                <p>{{ loan.customer }}<br>{{ loan.customer.phone }}<br>{{ loan.customer.address }}</p>
+
+
+                </div>
+

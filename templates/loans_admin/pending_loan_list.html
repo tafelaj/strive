@@ -102,6 +102,7 @@
                         <h6 class="card-category">
                             <strong>
                             Customer: {{ loan.customer }}<br>
+                                Phone: {{ loan.customer.phone }} <a class="text-dark" href="tel:{{ loan.customer.phone }}"><span>&phone;</span></a><br>
                             Amount:  {{ loan.amount }}<br>
                             Application Date: {{ loan.application_date }}<br>
                             Rate: {{ loan.get_interest_percentage }}<br>
