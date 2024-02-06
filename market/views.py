@@ -23,6 +23,6 @@ class PairList(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['pair'] = Pair.objects.get(pk=kwargs['pair_pk'])
-        context['buy_orders'] = Order.objects.filter(Q(type=1))
+        #context['buy_orders'] = Order.objects.filter(Q(type=1))
         return context
 
