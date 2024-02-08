@@ -69,6 +69,10 @@
 
             <li {% if request.path == home %} class="active" {% endif%}><a href="{% url 'investor:home' %}">Dashboard</a></li>
 
+            <li><a href="{% url 'investor:savings' %}">Savings</a></li>
+
+            <li><a href="{% url 'loans:home' %}">Loans</a></li>
+
             <li class="drop-down"><a href="">Accounts</a>
                 <ul>
                     <li class="drop-down"><a href="">Payment Accounts</a>
@@ -78,12 +82,9 @@
                         </ul>
                     </li>
                     <li><a href="">Update User Profile</a></li>
+                    <li><a href="">Terms and Conditions</a></li>
                 </ul>
             </li>
-
-            <li><a href="{% url 'investor:savings' %}">Savings</a></li>
-
-            <li><a href="{% url 'loans:home' %}">Loans</a></li>
             <!--<li><a href="">Market</a></li>-->
 
             </ul>
