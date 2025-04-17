@@ -4,13 +4,14 @@ from django.views.generic import TemplateView, ListView, FormView, DetailView
 import loans.forms
 from loans_admin.models import Customer, Expenses, Summery
 from loans.models import Loan, LoanPayment
-from investor.models import Station
+from investor.models import Station, Deposit
 from django.db.models import Q
 from datetime import datetime
 from loans_admin import forms
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db import transaction
+from django.utils import timezone
 #from django.contrib.messages.views import SuccessMessageMixin
 # Create your views here.
 
@@ -25,10 +26,10 @@ class Dash(TemplateView):
         loans_total = 0
 
         #number of stations
-        stations = Station.objects.filter(institution=request.user.station.institution).count()
+        #stations = Station.objects.filter(institution=request.user.station.institution).count()
 
         loans_and_profit = 0
-        loans = Loan.objects.filter(Q(station=request.user.station) & Q(status='1') | Q(status='2'))
+        loans = Loan.objects.filter(Q(status='1') | Q(status='2'))
 
         # active_loans
         active_loans = loans.filter(status='2')
@@ -46,7 +47,7 @@ class Dash(TemplateView):
         #total interest
         total_interest = loans_and_profit - loans_total
         context = {'loans': loans, 'active_loans': active_loans, 'pending_loans': pending_loans, 'pending_loans_total': pending_loans_total, 'loans_total': loans_total, 'total_interest': total_interest, 'available_cap': available_cap,
-                   'loans_and_profit': loans_and_profit, 'stations': stations,}
+                   'loans_and_profit': loans_and_profit,}
         return render(request, self.template_name, context)
 
  # payments...
@@ -119,7 +120,7 @@ class PendingLoansView(FormView):
                 loan.save()
 
         except Loan.DoesNotExist:
-            messages.error(request, 'I couldn\'t The Loan For Some Reason. I must be drunk')
+            messages.error(request, 'I couldn\'t Find The Loan For Some Reason. I must be drunk')
             return HttpResponseRedirect(reverse_lazy('loans_admin:pending_loans'))
         messages.success(request, 'Loan Approved')
         return HttpResponseRedirect(reverse_lazy('loans_admin:active_loans'))
@@ -129,9 +130,9 @@ class LoansView(FormView):
     template_name = 'loans_admin/loan_list.html'
 
     def get(self, request, *args, **kwargs):
-        loans = Loan.objects.filter(Q(station=request.user.station) & Q(status='2')).order_by('-id')
+        loan_list = Loan.objects.filter(Q(status='2')).order_by('-id')
 
-        context = {'loans': loans,}
+        context = {'loans': loan_list,}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -614,3 +615,52 @@ class LoansUpdate():
 
 class CustomerUpdate():
     pass
+
+class SavingsView(FormView):
+    template_name = 'loans_admin/savings.html'
+    def get(self, request, *args, **kwargs):
+        pending_savings = Deposit.objects.filter(Q(status='1'))
+        #pool total
+        pool_total = 0
+        savings = Deposit.objects.filter(Q(status='2') | Q(status='3'))
+        for saving in savings:
+            pool_total += saving.amount
+
+        #interest total
+        interest_total = 0
+        for saving in savings:
+            interest_total += saving.interest_earned
+
+        #number of active savings
+        active_savings_count = savings.count()
+
+        #number of spent savings
+        spent_savings = 0
+        spent_savings_total = 0
+        for saving in savings:
+            if saving.spent:
+                spent_savings +=1
+                spent_savings_total +=saving.amount
+                spent_savings_total +=saving.interest_earned
+
+        context = {'pending_savings': pending_savings, 'spent_savings':spent_savings,
+                   'active_savings_count': active_savings_count, 'interest_total':interest_total, 'pool_total':pool_total,
+                   'spent_savings_total':spent_savings_total}
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        #print(request.POST)
+        try:
+            deposit_id = request.POST.get('deposit_id')
+            transaction_id = request.POST.get('txn_ID')
+
+            deposit = Deposit.objects.get(pk=deposit_id)
+            deposit.status = '2'
+            deposit.transaction_id = transaction_id
+            deposit.approved_by = request.user
+            deposit.date_confirmed = timezone.now()
+            deposit.save()
+            messages.success(request, 'Deposit Confirmed')
+        except Deposit.DoesNotExist:
+            messages.error(request, 'I could not find the specified deposit, I plead Insanity!')
+        return HttpResponseRedirect(reverse_lazy('loans_admin:savings'))

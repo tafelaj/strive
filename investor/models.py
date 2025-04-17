@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 # Create your models here.
 class Institution(models.Model):
@@ -26,6 +27,7 @@ class StriveUser(AbstractUser):
     nrc = models.CharField(max_length=15)
     loans_admin = models.BooleanField(default=False)
     station = models.ForeignKey(Station, on_delete=models.CASCADE, null=True, blank=True)
+    paying_account = models.CharField(max_length=20, null=True, blank=True)
 
     def get_full_name(self):
         """
@@ -50,22 +52,28 @@ class Account(models.Model):
         # get all deposits
         deposits = Deposit.objects.filter(models.Q(account=self.id) & models.Q(spent=False))
 
-        # get interest earned
-
-        # get total balance
-        # todo all unspent deposits + interest earned
-
         # get cumulative balance
         cumulative_balance = 0
         for deposit in deposits:
             cumulative_balance += deposit.amount
-        return cumulative_balance
+
+        # get interest earned
+        interest = 0
+        for deposit in deposits:
+            interest += deposit.interest_earned
+
+        # get total balance
+        # todo all unspent deposits + interest earned
+        total_balance = cumulative_balance + interest
+
+        return [cumulative_balance, total_balance]
 
 class Deposit(models.Model):
     STATUS = (
         ('1','Pending Approval' ),
         ('2', 'Approved' ),
         ('3', 'Active'),
+        ('4', 'Withdrawn'),
     )
     user = models.ForeignKey(StriveUser, on_delete=models.CASCADE)
     amount = models.FloatField()
@@ -73,11 +81,16 @@ class Deposit(models.Model):
     status = models.CharField(max_length=1, choices=STATUS, default='1')
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     spent = models.BooleanField(default=False)
+    interest_earned = models.FloatField(default=0)
+    transaction_id = models.CharField(max_length=50, blank=True, null=True)
+    approved_by = models.ForeignKey(StriveUser, on_delete=models.CASCADE, related_name='approved_by', null=True, blank=True)
+    date_confirmed = models.DateTimeField(default=timezone.now)
 
 class Withdraw(models.Model):
     STATUS = (
         ('1', 'Pending Approval'),
         ('2', 'Approved'),
+        ('3', 'Disbursed'),
     )
     user = models.ForeignKey(StriveUser, on_delete=models.CASCADE)
     amount = models.FloatField()

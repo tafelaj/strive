@@ -16,11 +16,13 @@ urlpatterns = [
     #customers
     path('customers/', views.CustomerView.as_view(), name='customers'),
     path('customer/<int:pk>/loans/', views.CustomerView.as_view(), name='customer_loans'),
+
     #loans list
     path('loans/active/list/', views.LoansView.as_view(), name='active_loans'),
     path('loans/pending/list/', views.PendingLoansView.as_view(), name='pending_loans'),
     path('loans/completed/list/', views.CompletedLoans.as_view(), name='completed_loans'),
     path('loans/<int:pk>/details', views.LoanDetails.as_view(), name='loan_details'),
+
     #summary
     path('summary/', views.SummaryView.as_view(), name='summary'),
     path('summary/list/', views.SummaryList.as_view(), name='summary_list'),
@@ -39,6 +41,9 @@ urlpatterns = [
 
     #opening balance
     path('opening/balance/', views.SaveOpeningBalance.as_view(), name='opening_balance'),
+
+    #savings
+    path('savings/', views.SavingsView.as_view(), name='savings'),
 
     #legal
     path('terms', views.TermsView.as_view(), name='terms')

@@ -23,7 +23,6 @@
                     </button>
                 </div>
                 <div class="modal-body" id="modalBody">
-                    <strong><br>{{ acount }} account <br>TO<br> Zanaco Bank Account Number:<br> {{ strive_account }}</strong>.
 
                 </div>
                 <div class="modal-footer">
@@ -48,6 +47,7 @@
                 <div class="modal-body text-center">
                     <form method="post" action="" id="depositForm">
                         {% csrf_token %}
+                        <input type="hidden" value="{{ user.paying_account }}" name="paying_account">
                         <input class="form-control" type="number" step="any" placeholder="Enter Deposit Amount" name="deposit_amount" required>
                         <br>
                         <button type="submit" class="btn btn-primary" id="make_deposit">Make Deposit</button>
@@ -69,14 +69,65 @@
                     </button>
                 </div>
                 <div class="modal-body text-center">
-                    <span>Maximum You Can Withdraw Is K {{ available_balance }}</span>
+                    <span>Maximum You Can Withdraw Is ZMW {{ available_balance }}</span>
                     <form method="post" action="{% url 'investor:savings_withdraw' %}" id="depositForm">
                         {% csrf_token %}
                         <input type="hidden" name="available_balance" value="{{ available_balance }}">
-                        <input class="form-control" type="number" step="any" placeholder="Enter Withdraw Amount" name="withdraw_amount" required>
+                        <input class="form-control" type="number" step="any" placeholder="Enter Withdraw Amount" name="withdraw_amount" required max="{{ available_balance }}" min="10">
                         <br>
                         <button type="submit" class="btn btn-primary" id="withdraw">Withdraw</button>
                     </form>
+                </div>
+            </div>
+
+        </div>
+     </div>
+
+    <!--withdraw list Modal-->
+    <div class="modal fade" id="withdrawListModal" tabindex="-1" role="dialog" aria-labelledby="withdrawListModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="withdrawListModalTitle">Withdraw List</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                {% if withdraws %}
+                    <div class="table-responsive">
+				        <table class="table table-striped">
+                    <thead>
+						<tr>
+							<th>No.</th>
+							<th>Amount</th>
+							<th>Date Of Request</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+
+					<tbody id="inv_tbody">
+                    {% for withdraw in withdraws %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+							<td>ZMW {{ withdraw.amount }}</td>
+							<td>{{ withdraw.date }}</td>
+                            <td
+                                    {% if deposit.status == '1' %}
+                                    class="text-info"
+                                    {% else %}
+                                    class="text-success"
+                                    {% endif %}
+                            >{{ withdraw.get_status_display }}</td>
+						</tr>
+
+                    {% endfor %}
+					</tbody>
+				</table>
+			        </div>
+                {% else %}
+                    <h5 class="modal-title" id="withdrawListModalTitle">No Withdraws</h5>
+                {% endif %}
                 </div>
             </div>
 
@@ -109,10 +160,10 @@
                 <h5 class="card-title">{{ savings.user.get_full_name }}</h5>
                 <h6 class="card-category">
                     <strong>
-                    Cumulative Balance: K {{ cumulative_balance }}<br>
-                    Interest Earned: K{{ invoice.due_date }}<br>
-                    Total Balance: K {{ invoice.currency }} {{ invoice.get_invoice_total }}<br>
-                    Available Balance: K {{ available_balance }} {{ invoice.amount_paid }}
+                    Cumulative Balance: ZMW {{ savings.get_savings_total.0 }}<br>
+                    Interest Earned: ZMW {{ total_interest }}<br>
+                    Total Balance: ZMW {{ savings.get_savings_total.1 }}<br>
+                    Available Balance: ZMW {{ available_balance }}
                     </strong>
 
                 </h6>
@@ -136,7 +187,7 @@
                             <td>{{ forloop.counter }}</td>
 							<td>{{ deposit.amount }}</td>
 							<td>{{ deposit.date }}</td>
-							<td>{{ deposit.get_interest_earned}}</td>
+							<td>ZMW {{ deposit.interest_earned}}</td>
                             <td
                                     {% if deposit.status == '1' %}
                                     class="text-info"
@@ -158,7 +209,7 @@
               <div class="card-footer">
                   <button type="button" class="btn btn-success" data-toggle="modal" data-target="#depositModel">Deposit Funds</button>
                   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#withdrawModal">Withdraw Funds</button>
-                  <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#withdrawModal">List Withdraw Requests</button>
+                  <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#withdrawListModal">List Withdraw Requests</button>
               </div>
             </div>
           </div>

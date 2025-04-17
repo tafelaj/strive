@@ -71,33 +71,21 @@
 
             <li class="drop-down"><a href="">Loans</a>
                 <ul>
-                    <li class="drop-down"><a href="">Issue Loan</a>
-                        <ul>
-                            <li><a href="{% url 'loans_admin:new_loan_new' %}">New Customer</a> </li>
-                            <li><a href="{% url 'loans_admin:new_loan_existing' %}">Existing Customer</a> </li>
-                        </ul>
-                    </li>
-
-                    <li class="drop-down"><a href="">Loan Lists</a>
-                        <ul>
                             <li><a href="{% url 'loans_admin:active_loans' %}">Active loans</a></li>
                             <li><a href="{% url 'loans_admin:pending_loans' %}">Pending Loans</a></li>
                             <li><a href="{% url 'loans_admin:completed_loans' %}">Paid Loans</a></li>
-                        </ul>
-                    </li>
                 </ul>
             </li>
 
             <li class="drop-down"><a href="">Payments</a>
                 <ul>
-                    <li><a href="{% url 'loans_admin:pending_payments' %}">Pending For Today</a> </li>
                     <li><a href="{% url 'loans_admin:payments' %}">All Payments</a></li>
-
                 </ul>
             </li>
 
 
-            <li><a href="{% url 'loans_admin:summary' %}">Summary</a></li>
+            <li><a href="{% url 'loans_admin:savings' %}">Savings</a></li>
+
             <li class="drop-down"><a href="">Customers</a>
                 <ul>
                     <li><a href="{% url 'loans_admin:customers' %}">List Customer</a></li>

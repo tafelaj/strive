@@ -75,7 +75,7 @@ class Home(TemplateView):
 
         # get user savings
         try:
-            savings = Account.objects.get(user=request.user, account_type='1').get_savings_total()
+            savings = Account.objects.get(user=request.user, account_type='1').get_savings_total()[1]
         except Account.DoesNotExist:
             savings = 0
         context = {'assets': assets, 'loans': loans, 'savings': savings}
@@ -87,7 +87,8 @@ class SavingsView(FormView):
     template_name = 'investor/savings.html'
 
     def get(self, request, *args, **kwargs):
-        available_balance = 12
+        total_interest = 0
+        available_balance = 0
         # get user savings
         try:
             savings = Account.objects.get(Q(user=request.user) & Q(account_type='1'))
@@ -95,12 +96,22 @@ class SavingsView(FormView):
             savings = None
 
         # get available-balance
-        #todo available_balance =
+        #todo available_balance = mature savings + interest earned on mature savings
+        # interest + mature savings
+        # get all spent but not withdrawn deposits
+        available_deposit = Deposit.objects.filter(Q(user=request.user) & Q(spent=True) & Q(status__in=['1','2','3']))
+        for deposit in available_deposit:
+            available_balance += deposit.amount
+            available_balance += deposit.interest_earned
+            total_interest += deposit.interest_earned
 
         # get all deposits
         deposits = Deposit.objects.filter(Q(user=request.user) & Q(spent=False))
 
         #get interest earned
+        for deposit in deposits:
+            available_balance +=deposit.interest_earned
+            total_interest += deposit.interest_earned
 
         #get total balance
         #todo all unspent deposits + interest earned
@@ -110,8 +121,11 @@ class SavingsView(FormView):
         for deposit in deposits:
             cumulative_balance += deposit.amount
 
+        #withdraw requests
+        withdraws = None
+
         context = {'savings': savings, 'available_balance': available_balance, 'cumulative_balance': cumulative_balance,
-                   'deposits': deposits,}
+                   'deposits': deposits, 'total_interest': total_interest, 'withdraws': withdraws}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -125,9 +139,12 @@ class SavingsView(FormView):
             messages.error(request, 'Something Went Wrong: error 4**')
             return HttpResponseRedirect('investor:savings')
         try:
-            Deposit.objects.create(user=request.user, amount=amount, account=account)
-            messages.success(request, 'Deposit request received, Please Await Confirmation')
-            #todo add and info icon on all pending deposits
+            if request.user.paying_account:
+                Deposit.objects.create(user=request.user, amount=amount, account=account)
+                messages.success(request, 'Deposit request received, Please Await Confirmation')
+                #todo add and info icon on all pending deposits
+            else:
+                messages.error(request, 'We Could Not Process Your Deposit Request Because you have not setup your payment account.')
         except:
             #todo figure out what errors can result
             messages.error(request, 'We Could Not Process Your Deposit Request')

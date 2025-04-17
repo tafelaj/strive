@@ -1,0 +1,159 @@
+{% extends 'loans_admin/base.html' %}
+{% block title %}Strive!{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block testimonials_section%}{% endblock %}
+
+{% block hero %}{% endblock %}
+{% block services_section %}{% endblock %}
+{% block counts_section %}{% endblock %}
+{% block pricing_section %}{% endblock %}
+{% block team_section %}{% endblock %}
+
+{% block who_we_are %}
+    Account RoundUp
+    actual balance
+    available balance
+{% endblock %}
+
+{% block portfolio_section %}
+    <section id="services" class="services "></section>
+     <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h3>Savings</h3>
+            <small>✻ Overview of Current status of savings ✻ <br>{{ request.user.get_full_name }}</small>
+          </div>
+
+        <div class="row" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-lg-12 d-flex justify-content-center">
+              {% include 'partials/messages.html' %}
+
+          </div>
+        </div>
+
+         <div class="row">
+
+          <div class="col-md-12">
+            <div class="card demo-icons">
+              <div class="card-header">
+                <h5 class="card-title">Savings Summary </h5>
+                  <p class="card-category"></p>
+              </div>
+               <div class="card-body">
+                   <div class="table-responsive">
+				<table class="table table-striped">
+
+					<tbody id="inv_tbody">
+                        <tr>
+                            <td>Amount In Pool: <strong>ZMW {{ pool_total }}</strong></td>
+
+						</tr>
+
+                        <tr>
+                        <td>Interest Earned: <strong>ZMW {{ interest_total }}</strong></td>
+
+                    </tr>
+
+                   <!-- <tr>
+                        <td>Amount Available: <strong>K { available_cap }}</strong></td>
+                    </tr>-->
+
+                    <tr>
+                        <td>No. Active Savings: <strong>{{ active_savings_count }}</strong></td>
+                    </tr>
+
+                    <tr>
+                        <td>No. Spent Savings: <strong>{{ spent_savings }} (ZMW {{ spent_savings_total }})</strong></td>
+                    </tr>
+
+					</tbody>
+				</table>
+			</div>
+               </div>
+
+                <p class="card-footer">
+                   <strong>Grand Total: ZMW {{ pool_total| add:interest_total }}</strong> <br>
+                </p>
+            </div>
+          </div>
+
+         </div>
+
+        <br>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card demo-icons">
+              <div class="card-header">
+                <h5 class="card-title">Pending Savings</h5>
+                  <p class="card-category">list of Pending Saving Requests</p>
+              </div>
+                <div class="card-body">
+                {% if pending_savings %}
+                    <div class="table-responsive">
+				<table class="table table-striped">
+                    <thead>
+						<tr>
+							<th>No.</th>
+							<th>Amount</th>
+							<th>Customer</th>
+                            <th>Account</th>
+
+						</tr>
+					</thead>
+
+					<tbody id="inv_tbody">
+                    {% for saving in pending_savings %}
+                        <tr
+                                {% if loan.status == '1' %}
+                                    class="text-danger"
+                                {% endif %}
+                        >
+                            <td>{{ forloop.counter }}</td>
+							<td><strong>ZMW {{ saving.amount }}</strong></td>
+							<td>{{ saving.user }}</td>
+							<td><strong>{{ saving.user.paying_account}}</strong></td>
+
+                        <td class="text-right">
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ saving.id }}" name="deposit_id">
+                                <input name="txn_ID" placeholder="Trans ID" class="form-control" required>
+                                <input type="submit" class="btn btn-success" value="Confirm">
+                            </form>
+                        </td>
+						</tr>
+
+                    {% endfor %}
+					</tbody>
+				</table>
+			</div>
+                {% else %}
+                    <div class="col-md-auto col-lg-12 col-sm-12 text-center">
+                <div>
+                    <h5 class="text-info">You Have No Pending Savings Yet...</h5>
+                </div>
+             </div>
+                {% endif %}
+                </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+          <hr>
+
+    </section><!-- End Portfolio Section -->
+    <section class="services"></section>
+
+    {% endblock portfolio_section %}
+
+{% block about_section %}{% endblock %}
+{% block tabs_section %}{% endblock %}
+{% block clients_section %}{% endblock %}
+{% block faq %}{% endblock %}
+{% block contact_section %}{% endblock %}
+{% block footer %}{% endblock %}

@@ -1,7 +1,7 @@
 $(document).ready(function () {
     //functions for 1st part of deposit modal
-    function makeDeposit(amount) {
-        $('#modalBody').prepend('To complete your deposit, please <strong>Send K ' + amount +'</strong> from your');
+    function makeDeposit(amount, account) {
+        $('#modalBody').html('Your Deposit of <strong>ZMW ' + amount +'</strong> was initiated from <strong>('+ account +')</strong>. <br>Please enter you PIN on the popup that will appear on your phone to complete your deposit.');
         $('#depositModel').modal('hide');
         $('#depositInstruction').modal('show');
 
@@ -11,10 +11,11 @@ $(document).ready(function () {
     $('#make_deposit').on('click', function (e) {
         e.preventDefault();
         var depositForm = $('#depositForm');
+        //alert(depositForm[0][0].value);
        if(depositForm[0].checkValidity())
            //console.log(depositForm[0][1].valueAsNumber);
            //$('#amount').html();
-           makeDeposit(depositForm[0][1].valueAsNumber);
+           makeDeposit(depositForm[0][2].valueAsNumber, depositForm[0][1].value);
        else
            //validate form
         depositForm[0].reportValidity();
