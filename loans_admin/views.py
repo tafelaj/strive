@@ -124,6 +124,7 @@ class UpdateCustomerView(FormView):
         else:
             #print(formset.errors)
             messages.error(request, 'The Form Did Not Validate, Please Check Your Entries')
+            messages.error(request, '{}'.format(formset.errors))
             return HttpResponseRedirect(reverse_lazy('loans_admin:update_customers'))
         return HttpResponseRedirect(reverse_lazy('loans_admin:customers'))
 
