@@ -4,6 +4,12 @@ from investor.models import StriveUser, Station
 
 
 # Create your models here.
+class Institution(models.Model):
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 class Customer(models.Model):
     SEX = (
@@ -14,12 +20,13 @@ class Customer(models.Model):
     address = models.CharField(max_length=50, help_text='Enter Address')
     phone = models.CharField(max_length=13)
     email = models.EmailField(blank=True, null=True)
-    date_of_birth = models.DateField(help_text='Enter Customer\'s Date Of Birth')
-    nrc = models.CharField(max_length=15, help_text='Enter NRC number')
+    date_of_birth = models.DateField(help_text='Enter Customer\'s Date Of Birth', blank=True, null=True)
+    nrc = models.CharField(max_length=15, help_text='Enter NRC number', blank=True, null=True)
     sex = models.CharField(max_length=1, choices=SEX, help_text='Set The Customer\'s Gender')
-    business_type = models.CharField(max_length=50, help_text='Enter Customer\'s Business Type')
-    trading_area = models.CharField(max_length=50, help_text='Enter Customer\'s Trading Area')
-    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+    institution = models.ForeignKey(Institution, help_text='Enter Customer\'s Related Institution', blank=True, null=True, on_delete=models.DO_NOTHING)
+    #trading_area = models.CharField(max_length=50, help_text='Enter Customer\'s Trading Area')
+    #station = models.ForeignKey(Station, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
     black_listed = models.BooleanField(default=False)
 
     def __str__(self):

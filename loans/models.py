@@ -46,20 +46,24 @@ class Loan(models.Model):
         ('4', 'Rejected'),
     )
     LOAN_TERM = (
-        ('1', 'One Month'),
-        ('2', 'Two Months'),
-        ('3', 'Three Months'),
+        ('1', 'One Week'),
+        ('2', 'Two Weeks'),
+        ('3', 'One Month'),
+        ('4', 'Two Months'),
+        ('5', 'Three Months'),
     )
     PAYMENTS = (
-        ('1', 'Bi-Weekly'),
+        ('1', 'Weekly'),
         ('2', 'Monthly'),
     )
-    user = models.ForeignKey(StriveUser, on_delete=models.CASCADE, related_name='customer')
+    user = models.ForeignKey(StriveUser, on_delete=models.CASCADE, related_name='customer_user', null=True, blank=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True, blank=True)
     approved_by = models.ForeignKey(StriveUser, on_delete=models.CASCADE, null=True, blank=True)
     issue_date = models.DateTimeField(default=timezone.now)
-    application_date = models.DateTimeField(auto_created=True)
+    application_date = models.DateTimeField(default=timezone.now)
+    due_date = models.DateTimeField(default=timezone.now)
     amount = models.FloatField(help_text='Enter loan amount')
-    interest_rate = models.FloatField(default=0.3, help_text='Enter Interest Rate As A Decimal Fraction')
+    interest_rate = models.FloatField(default=0.37, help_text='Enter Interest Rate As A Decimal Fraction')
     status = models.CharField(choices=LOAN_STATUS, max_length=1, default='1')
     term = models.CharField(max_length=1, choices=LOAN_TERM, default='1', help_text='Whats the term of the loan')
     payment_frequency = models.CharField(max_length=1, default='1', choices=PAYMENTS, help_text='How often will the Customer make Loan Payments')
@@ -99,7 +103,12 @@ class Loan(models.Model):
         # todo refine this function so as to get a consistent number of digits in the loan ID
         loan_pk = str(self.id)
         id_length = len(loan_pk)
-        user_id = self.user.id
+        if self.user:
+            user_id = self.user.id
+        elif self.customer:
+            user_id = self.customer.id
+        else:
+            user_id = '0'
         # find the number of Zeros to add
         difference = 7 - id_length
         zeros = '0'
@@ -120,7 +129,7 @@ class LoanPayment(models.Model):
     loan = models.ForeignKey(Loan, on_delete=models.DO_NOTHING)
     received_by = models.ForeignKey(StriveUser, on_delete=models.DO_NOTHING)
     date = models.DateTimeField(auto_now_add=True)
-    payment_type = models.CharField(max_length=1, choices=PAYMENT_TYPE, default='1')
+    payment_type = models.CharField(max_length=1, choices=PAYMENT_TYPE, default='2')
     amount = models.FloatField()
     balance = models.FloatField(null=True, blank=True)
     station = models.ForeignKey(Station, on_delete=models.CASCADE)

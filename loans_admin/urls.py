@@ -16,6 +16,7 @@ urlpatterns = [
     #customers
     path('customers/', views.CustomerView.as_view(), name='customers'),
     path('customer/<int:pk>/loans/', views.CustomerView.as_view(), name='customer_loans'),
+    path('customers/update/all/', views.UpdateCustomerView.as_view(), name='update_customers'),
 
     #loans list
     path('loans/active/list/', views.LoansView.as_view(), name='active_loans'),
@@ -32,8 +33,8 @@ urlpatterns = [
          name='month_summary_detail'),
 
     #new loans
-    path('loans/add/', views.IssueLoanNewCustomer.as_view(), name='new_loan_new'),
-    path('loans/add/existing/', views.IssueLoanExistingCustomer.as_view(), name='new_loan_existing'),
+    path('loans/add/', views.IssueLoanNewCustomer.as_view(), name='new_loan_new_client'),
+    path('loans/add/existing/', views.IssueLoanExistingCustomer.as_view(), name='new_loan_existing_client'),
     path('loans/reject/', views.LoanRejection.as_view(), name='loan_reject'),
 
     #stations

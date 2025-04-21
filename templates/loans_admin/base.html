@@ -77,6 +77,13 @@
                 </ul>
             </li>
 
+            <li class="drop-down"><a href="">Add Loan</a>
+                <ul>
+                            <li><a href="{% url 'loans_admin:new_loan_existing_client' %}">Existing Client</a></li>
+                            <li><a href="{% url 'loans_admin:new_loan_new_client' %}">New Client</a></li>
+                </ul>
+            </li>
+
             <li class="drop-down"><a href="">Payments</a>
                 <ul>
                     <li><a href="{% url 'loans_admin:payments' %}">All Payments</a></li>
@@ -89,6 +96,7 @@
             <li class="drop-down"><a href="">Customers</a>
                 <ul>
                     <li><a href="{% url 'loans_admin:customers' %}">List Customer</a></li>
+                    <li><a href="{% url 'loans_admin:update_customers' %}">Update Customers</a></li>
                 </ul>
             </li>
 

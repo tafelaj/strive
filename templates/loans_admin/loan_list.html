@@ -182,7 +182,9 @@
                             Amount To Pay: K {{ loan.get_total_amount | floatformat:2 }}<br>
                                 Amount Paid: K {{ loan.get_total_payments  | floatformat:2 }}<br>
                                 Balance: K {{ loan.get_balance | floatformat:2 }}<br>
-                            Issue Date: {{ loan.issue_date }}<br>
+                            Application Date: {{ loan.application_date }}<br>
+                                Issue Date: {{ loan.issue_date }}<br>
+                                Due Date: {{ loan.due_date }}<br>
                             Rate: {{ loan.get_interest_percentage }}<br>
                             Term: {{ loan.get_term_display }}<br>
                             Payments: {{ loan.get_payment_frequency_display }}

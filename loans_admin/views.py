@@ -6,7 +6,7 @@ from loans_admin.models import Customer, Expenses, Summery
 from loans.models import Loan, LoanPayment
 from investor.models import Station, Deposit
 from django.db.models import Q
-from datetime import datetime
+from datetime import datetime, timedelta
 from loans_admin import forms
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -93,8 +93,39 @@ class CustomerView(ListView):
     paginate_by = '30'
 
     def get_queryset(self):
-        q = Customer.objects.filter(station=self.request.user.station).order_by('-id')
+        q = Customer.objects.filter(is_active=True).order_by('-id')
         return q
+
+class UpdateCustomerView(FormView):
+    template_name = 'loans_admin/update_customers.html'
+
+    def get(self, request, *args, **kwargs):
+        customers = Customer.objects.all()
+
+        formset = forms.CustomerFormSet(queryset=customers)
+
+        context = {'formset':formset, 'show_delete': True}
+        return  render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        customers = Customer.objects.all()
+
+        formset = forms.CustomerFormSet(request.POST or None, queryset=customers)
+
+        if formset.is_valid():
+            with transaction.atomic():
+                instances = formset.save(commit=False)
+                for obj in formset.deleted_objects:
+                    obj.delete()
+
+                for instance in instances:
+                    instance.save()
+                messages.success(request, 'Customers Updated Successfully')
+        else:
+            #print(formset.errors)
+            messages.error(request, 'The Form Did Not Validate, Please Check Your Entries')
+            return HttpResponseRedirect(reverse_lazy('loans_admin:update_customers'))
+        return HttpResponseRedirect(reverse_lazy('loans_admin:customers'))
 
 
 class PendingLoansView(FormView):
@@ -106,18 +137,33 @@ class PendingLoansView(FormView):
         context = {'loans': loans, }
         return render(request, self.template_name, context)
 
+    #approve loans
     def post(self, request, *args, **kwargs):
         approved_amount = request.POST.get('approved_amount')
         loan_id = request.POST.get('loan_id')
         try:
             loan = Loan.objects.get(pk=loan_id)
-            if loan.amount == approved_amount:
-                loan.status = '2'
-                loan.save()
-            else:
+            # set the due date
+            due_date = None
+            if loan.term == '1':
+                due_date = datetime.today() + timedelta(7)
+            elif loan.term == '2':
+                due_date = datetime.today() + timedelta(14)
+            elif loan.term == '3':
+                due_date = datetime.today() + timedelta(30)
+            elif loan == '4':
+                due_date = datetime.today() + timedelta(60)
+            elif loan.term =='5':
+                due_date = datetime.today() + timedelta(90)
+
+            loan.due_date = due_date
+            if loan.amount != approved_amount:
                 loan.amount = approved_amount
-                loan.status = '2'
-                loan.save()
+
+            loan.status = '2'
+            loan.issue_date = timezone.now()
+            loan.approved_by = request.user
+            loan.save()
 
         except Loan.DoesNotExist:
             messages.error(request, 'I couldn\'t Find The Loan For Some Reason. I must be drunk')
@@ -498,7 +544,7 @@ class IssueLoanNewCustomer(FormView):
         customer_form = forms.CustomerForm(request.POST or None)
         if customer_form.is_valid():
             customer = customer_form.save(commit=False)
-            customer.station = request.user.station
+            #customer.station = request.user.station
             customer.save()
         else:
             messages.error(request, 'The Customer Form Did Not Validate')
@@ -510,7 +556,9 @@ class IssueLoanNewCustomer(FormView):
             loan = loan_form.save(commit=False)
             loan.customer = customer
             loan.issued_by = request.user
-            loan.station = request.user.station
+            #loan.station = request.user.station
+            if loan.term == '1' or loan.term == '2':
+                loan.interest_rate = 0.25
             loan.save()
         else:
             messages.error(request, 'The Loan Form Did Not Validate')
@@ -528,7 +576,7 @@ class IssueLoanExistingCustomer(FormView):
         loan_form = loans.forms.LoanForm()
 
         #get existing customers
-        customers = Customer.objects.filter(station=request.user.station)
+        customers = Customer.objects.filter(is_active=True)
 
         context = {'loan_form': loan_form, 'customers': customers,}
         return render(request, self.template_name, context)
@@ -548,7 +596,9 @@ class IssueLoanExistingCustomer(FormView):
             loan = loan_form.save(commit=False)
             loan.customer = customer
             loan.issued_by = request.user
-            loan.station = request.user.station
+            #loan.station = request.user.station
+            if loan.term == '1' or loan.term == '2':
+                loan.interest_rate = 0.25
             loan.save()
         else:
             messages.error(request, 'The Loan Form Did Not Validate')
