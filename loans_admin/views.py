@@ -20,23 +20,23 @@ class Dash(TemplateView):
     template_name = 'loans_admin/dash.html'
 
     def get(self, request, *args, **kwargs):
-        #available capital
-        available_cap = 0
         #get loans
         loans_total = 0
+        loans_and_profit = 0
+        pending_loans_total = 0
 
         #number of stations
         #stations = Station.objects.filter(institution=request.user.station.institution).count()
 
-        loans_and_profit = 0
-        loans = Loan.objects.filter(Q(status='1') | Q(status='2'))
+
+        loans = Loan.objects.filter(Q(station=request.user.station) & (Q(status='1') | Q(status='2')))
 
         # active_loans
         active_loans = loans.filter(status='2')
 
         # pending loans
         pending_loans = loans.filter(status='1')
-        pending_loans_total = 0
+
         for loan in pending_loans:
             pending_loans_total += loan.amount
 
@@ -44,10 +44,21 @@ class Dash(TemplateView):
             loans_total += loan.amount
             loans_and_profit += loan.get_total_amount()
 
+        #total recovered money
+        loans_total_recovered = 0
+        for loan in loans:
+            loans_total_recovered += loan.get_total_payments()
+
+        #percent recovered
+        try:
+            percent_recovered = (loans_total_recovered/loans_and_profit) * 100
+        except ZeroDivisionError:
+            percent_recovered = 100
+
         #total interest
         total_interest = loans_and_profit - loans_total
-        context = {'loans': loans, 'active_loans': active_loans, 'pending_loans': pending_loans, 'pending_loans_total': pending_loans_total, 'loans_total': loans_total, 'total_interest': total_interest, 'available_cap': available_cap,
-                   'loans_and_profit': loans_and_profit,}
+        context = {'loans': loans, 'active_loans': active_loans, 'pending_loans': pending_loans, 'pending_loans_total': pending_loans_total, 'loans_total': loans_total, 'total_interest': total_interest,
+                   'loans_and_profit': loans_and_profit,'loans_total_recovered': loans_total_recovered, 'percent_recovered':percent_recovered}
         return render(request, self.template_name, context)
 
  # payments...
@@ -167,6 +178,11 @@ class PendingLoansView(FormView):
             loan.status = '2'
             loan.issue_date = timezone.now()
             loan.approved_by = request.user
+
+            #change the value for available funds
+            loan.station.available_funds -= float(loan.amount)
+            loan.station.save()
+            #save loan changes
             loan.save()
 
         except Loan.DoesNotExist:
@@ -180,7 +196,7 @@ class LoansView(FormView):
     template_name = 'loans_admin/loan_list.html'
 
     def get(self, request, *args, **kwargs):
-        loan_list = Loan.objects.filter(Q(status='2')).order_by('-id')
+        loan_list = Loan.objects.filter(Q(station=request.user.station) & Q(status='2')).order_by('-id')
 
         context = {'loans': loan_list,}
         return render(request, self.template_name, context)
@@ -211,6 +227,8 @@ class LoansView(FormView):
                                                          station=request.user.station, payment_type=payment_type)
 
                     payment.balance = loan.get_balance()
+                    payment.station.available_funds += float(payment.amount)
+                    payment.station.save()
                     payment.save()
 
                     if loan.get_balance() == 0:
@@ -231,6 +249,8 @@ class LoansView(FormView):
                 payment = LoanPayment.objects.create(loan=loan, received_by=request.user, amount=amount,
                                                  station=request.user.station, payment_type=payment_type)
                 payment.balance = loan.get_balance()
+                payment.station.available_funds += float(payment.amount)
+                payment.station.save()
                 payment.save()
 
                 if loan.get_balance() == 0:
@@ -564,7 +584,7 @@ class IssueLoanNewCustomer(FormView):
             loan = loan_form.save(commit=False)
             loan.customer = customer
             loan.issued_by = request.user
-            #loan.station = request.user.station
+            loan.station = request.user.station
             if loan.term == '1' or loan.term == '2':
                 loan.interest_rate = 0.25
             loan.save()
@@ -604,7 +624,7 @@ class IssueLoanExistingCustomer(FormView):
             loan = loan_form.save(commit=False)
             loan.customer = customer
             loan.issued_by = request.user
-            #loan.station = request.user.station
+            loan.station = request.user.station
             if loan.term == '1' or loan.term == '2':
                 loan.interest_rate = 0.25
             loan.save()

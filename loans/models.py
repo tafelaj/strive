@@ -67,7 +67,7 @@ class Loan(models.Model):
     status = models.CharField(choices=LOAN_STATUS, max_length=1, default='1')
     term = models.CharField(max_length=1, choices=LOAN_TERM, default='1', help_text='Whats the term of the loan')
     payment_frequency = models.CharField(max_length=1, default='1', choices=PAYMENTS, help_text='How often will the Customer make Loan Payments')
-    station = models.ForeignKey(Station, on_delete=models.CASCADE, null=True, blank=True)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
     disbursed = models.BooleanField(default=False)
 
     def get_total_payments(self):
@@ -149,3 +149,7 @@ class LoanPayment(models.Model):
 
     def __str__(self):
         return str(self.loan) + ' ' + str(self.amount)
+
+    #def save(self, *args, **kwargs):
+    #    print('saved')
+    #    super().save(*args, **kwargs)

@@ -53,13 +53,16 @@
 						</tr>
 
                         <tr>
-                        <td>Expected Interest: <strong>K {{ total_interest }}</strong></td>
+                        <td>Expected Interest: <strong>K {{ total_interest|floatformat:2 }}</strong></td>
 
                     </tr>
 
-                   <!-- <tr>
-                        <td>Amount Available: <strong>K { available_cap }}</strong></td>
-                    </tr>-->
+                    <tr>
+                        <td>Amount Recovered: <strong>K {{ loans_total_recovered }} ({{ percent_recovered|floatformat:2 }}%)</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Amount Available: <strong> K {{request.user.station.available_funds|floatformat:2 }}</strong></td>
+                    </tr>
 
                     <tr>
                         <td>No. Active Loans: <strong>{{ active_loans|length }}</strong></td>
@@ -75,7 +78,7 @@
                </div>
 
                 <p class="card-footer">
-                   <strong>Grand Total K {{ loans_and_profit }}</strong> <br>
+                    <strong>Grand Total K {{ loans_and_profit|floatformat:2 }}</strong><br><small>NB: This is a total of loans issued and expected interest</small> <br>
                 </p>
             </div>
           </div>
