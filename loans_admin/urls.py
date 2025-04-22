@@ -8,11 +8,13 @@ app_name = 'loans_admin'
 urlpatterns = [
     #path('user/create/', views.SignUpView.as_view(), name='user_create'),
     path('', views.Dash.as_view(), name='loans_admin_home'),
+
     #payments
     path('payments/', views.PaymentsView.as_view(), name='payments'),
     path('payment/<int:pk>/detail/', views.PaymentsView.as_view(), name='payment_details'),
     path('payments/pending/', views.PendingPayments.as_view(), name='pending_payments'),
     #path('payment/add/<int:loan_pk>/', views.MakePayment.as_view(), name='make_payment'),
+
     #customers
     path('customers/', views.CustomerView.as_view(), name='customers'),
     path('customer/<int:pk>/loans/', views.CustomerView.as_view(), name='customer_loans'),
@@ -22,6 +24,7 @@ urlpatterns = [
     path('loans/active/list/', views.LoansView.as_view(), name='active_loans'),
     path('loans/pending/list/', views.PendingLoansView.as_view(), name='pending_loans'),
     path('loans/completed/list/', views.CompletedLoans.as_view(), name='completed_loans'),
+    #path('loans/pastdue/list/', views.CompletedLoans.as_view(), name='past_due_loans'),
     path('loans/<int:pk>/details', views.LoanDetails.as_view(), name='loan_details'),
 
     #summary

@@ -4,7 +4,7 @@ from investor.models import StriveUser, Station
 
 
 # Create your models here.
-class Institution(models.Model):
+class CustomerInstitution(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=100)
 
@@ -23,9 +23,9 @@ class Customer(models.Model):
     date_of_birth = models.DateField(help_text='Enter Customer\'s Date Of Birth', blank=True, null=True)
     nrc = models.CharField(max_length=15, help_text='Enter NRC number', blank=True, null=True)
     sex = models.CharField(max_length=1, choices=SEX, help_text='Set The Customer\'s Gender')
-    institution = models.ForeignKey(Institution, help_text='Enter Customer\'s Related Institution', blank=True, null=True, on_delete=models.DO_NOTHING)
+    institution = models.ForeignKey(CustomerInstitution, help_text='Enter Customer\'s Related Institution', blank=True, null=True, on_delete=models.DO_NOTHING)
     #trading_area = models.CharField(max_length=50, help_text='Enter Customer\'s Trading Area')
-    #station = models.ForeignKey(Station, on_delete=models.CASCADE)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     black_listed = models.BooleanField(default=False)
 

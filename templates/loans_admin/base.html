@@ -73,6 +73,7 @@
                 <ul>
                             <li><a href="{% url 'loans_admin:active_loans' %}">Active loans</a></li>
                             <li><a href="{% url 'loans_admin:pending_loans' %}">Pending Loans</a></li>
+                            {% comment %}<li><a href="{% url 'loans_admin:past_due_loans' %}">Past Due Loans</a></li>{% endcomment %}
                             <li><a href="{% url 'loans_admin:completed_loans' %}">Paid Loans</a></li>
                 </ul>
             </li>

@@ -51,6 +51,8 @@ class Dash(TemplateView):
         return render(request, self.template_name, context)
 
  # payments...
+
+
 class PaymentsView(ListView):
     template_name = 'loans_admin/payments.html'
     model = LoanPayment
@@ -119,6 +121,7 @@ class UpdateCustomerView(FormView):
                     obj.delete()
 
                 for instance in instances:
+                    instance.station = request.user.station
                     instance.save()
                 messages.success(request, 'Customers Updated Successfully')
         else:
@@ -182,6 +185,7 @@ class LoansView(FormView):
         context = {'loans': loan_list,}
         return render(request, self.template_name, context)
 
+    #loan repayments
     def post(self, request, *args, **kwargs):
         # date
         date = datetime.today()
@@ -191,7 +195,7 @@ class LoansView(FormView):
         loan_id = request.POST.get('loan_id')
         payment_type = request.POST.get('payment_type')
         confirm_re_pay = request.POST.get('confirm_re_pay')
-        print(confirm_re_pay)
+        #print(confirm_re_pay)
         try:
             loan = Loan.objects.get(pk=loan_id)
             balance = loan.get_balance()
@@ -205,8 +209,10 @@ class LoansView(FormView):
                     # make the payment
                     payment = LoanPayment.objects.create(loan=loan, received_by=request.user, amount=amount,
                                                          station=request.user.station, payment_type=payment_type)
+
                     payment.balance = loan.get_balance()
                     payment.save()
+
                     if loan.get_balance() == 0:
                         loan.status = '3'
                         loan.save()
@@ -226,6 +232,7 @@ class LoansView(FormView):
                                                  station=request.user.station, payment_type=payment_type)
                 payment.balance = loan.get_balance()
                 payment.save()
+
                 if loan.get_balance() == 0:
                     loan.status = '3'
                     loan.save()
@@ -545,7 +552,7 @@ class IssueLoanNewCustomer(FormView):
         customer_form = forms.CustomerForm(request.POST or None)
         if customer_form.is_valid():
             customer = customer_form.save(commit=False)
-            #customer.station = request.user.station
+            customer.station = request.user.station
             customer.save()
         else:
             messages.error(request, 'The Customer Form Did Not Validate')
@@ -624,7 +631,6 @@ class LoanRejection(FormView):
 class TermsView(TemplateView):
     template_name = 'loans_admin/t_and_c.html'
 
-
 #stations
 class StationsView(FormView):
     #implementation formset for all user stations if user is admin
@@ -661,10 +667,6 @@ class SaveOpeningBalance(FormView):
         return HttpResponseRedirect(reverse_lazy('loans_admin:summary'))
 
 class LoansUpdate():
-    pass
-
-
-class CustomerUpdate():
     pass
 
 class SavingsView(FormView):

@@ -118,7 +118,16 @@ class Loan(models.Model):
         return load_id
 
     def __str__(self):
-        return str(self.get_loan_id()) + ': ' + str(self.user)
+        user = None
+        if self.user:
+            user = self.user
+        else:
+            user = self.customer
+        return str(self.get_loan_id()) + ': ' + str(user)
+
+    def is_past_due(self):
+        if timezone.now() > self.due_date:
+            return True
 
 
 class LoanPayment(models.Model):

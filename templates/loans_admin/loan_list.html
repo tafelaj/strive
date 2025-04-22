@@ -170,7 +170,7 @@
 
          {% if loans %}
              {% for loan in loans %}
-                 <div class="row" id="{{ loan.id }}">
+                 <div class="row {% if loan.is_past_due %}text-danger{% endif %}" id="{{ loan.id }}">
                   <div class="col-md-12">
                     <div class="card demo icon">
                       <div class="card-header">
@@ -195,7 +195,7 @@
                     <div class="card-footer">
                         <button data-toggle="modal" data-target="#loanPaymentModel{{ loan.id }}" class="btn btn-primary">Make Payment</button><!--MODEL-->
                         <button data-toggle="modal" data-target="#loanDetail{{ loan.id }}" class="btn btn-info">Details</button><!--modal-->
-                        <a href="{% url 'loans_admin:loans_admin_home' %}" class="btn btn-warning">Update</a>
+                        <a href="#" class="btn btn-warning">Update</a>
                     </div>
                     </div>
                   </div>
