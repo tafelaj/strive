@@ -161,15 +161,15 @@ class PendingLoansView(FormView):
             # set the due date
             due_date = None
             if loan.term == '1':
-                due_date = datetime.today() + timedelta(7)
+                due_date = timezone.now() + timedelta(7)
             elif loan.term == '2':
-                due_date = datetime.today() + timedelta(14)
+                due_date = timezone.now() + timedelta(14)
             elif loan.term == '3':
-                due_date = datetime.today() + timedelta(30)
-            elif loan == '4':
-                due_date = datetime.today() + timedelta(60)
+                due_date = timezone.now() + timedelta(30)
+            elif loan.term == '4':
+                due_date = timezone.now() + timedelta(60)
             elif loan.term =='5':
-                due_date = datetime.today() + timedelta(90)
+                due_date = timezone.now() + timedelta(90)
 
             loan.due_date = due_date
             if loan.amount != approved_amount:
@@ -587,6 +587,10 @@ class IssueLoanNewCustomer(FormView):
             loan.station = request.user.station
             if loan.term == '1' or loan.term == '2':
                 loan.interest_rate = 0.25
+            elif loan.term == '4':
+                loan.interest_rate = loan.interest_rate * 2
+            elif  loan.term == '5':
+                loan.interest_rate = loan.interest_rate * 3
             loan.save()
         else:
             messages.error(request, 'The Loan Form Did Not Validate')
@@ -627,6 +631,10 @@ class IssueLoanExistingCustomer(FormView):
             loan.station = request.user.station
             if loan.term == '1' or loan.term == '2':
                 loan.interest_rate = 0.25
+            elif loan.term == '4':
+                loan.interest_rate = loan.interest_rate * 2
+            elif  loan.term == '5':
+                loan.interest_rate = loan.interest_rate * 3
             loan.save()
         else:
             messages.error(request, 'The Loan Form Did Not Validate')

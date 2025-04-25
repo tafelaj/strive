@@ -95,8 +95,7 @@ class Loan(models.Model):
         return balance
 
     def get_interest_percentage(self):
-        percentage = str(self.interest_rate * 100)
-        percentage = percentage + ' %'
+        percentage = str(round(self.interest_rate * 100, 2))+ ' %'
         return percentage
 
     def get_loan_id(self):
