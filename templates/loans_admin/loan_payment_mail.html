@@ -1,0 +1,114 @@
+{% extends 'loans_admin/base.html' %}
+{% block title %}Loan Payment Mail{% endblock %}
+{% load static %}
+{% block testimonials_section%}{% endblock %}
+
+{% block hero %}{% endblock %}
+{% block services_section %}{% endblock %}
+{% block counts_section %}{% endblock %}
+{% block pricing_section %}{% endblock %}
+{% block team_section %}{% endblock %}
+{% block auto_complete_tags %}
+    <link rel="stylesheet" href="{% static 'jquery-ui-1.13.1/jquery-ui.css' %}">
+  <script src="{% static 'jquery-ui-1.13.1/external/jquery/jquery.js' %}"></script>
+  <script src="{% static 'jquery-ui-1.13.1/jquery-ui.js' %}"></script>
+{% endblock auto_complete_tags %}
+{% block js_files %}
+     <!-- Vendor JS Files -->
+
+
+  <script src="{% static 'investor/presento/assets/vendor/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+  <script src="{% static 'investor/presento/assets/vendor/owl.carousel/owl.carousel.min.js'%}"></script>
+
+  <script src="{% static 'investor/presento/assets/vendor/counterup/counterup.min.js'%}"></script>
+  <script src="{% static 'investor/presento/assets/vendor/isotope-layout/isotope.pkgd.min.js'%}"></script>
+  <script src="{% static 'investor/presento/assets/vendor/venobox/venobox.min.js'%}"></script>
+  <script src="{% static 'investor/presento/assets/vendor/aos/aos.js'%}"></script>
+  <script>
+      // See https://github.com/facebook/react/issues/20829#issuecomment-802088260
+      if (!crossOriginIsolated) SharedArrayBuffer = ArrayBuffer;
+    </script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'investor/presento/assets/js/main.js'%}" type="module"></script>
+{% endblock js_files%}
+
+{% block portfolio_section %}
+    <section id="services" class="services "></section>
+     <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2 style="color: #00bbff">Loan Payment Received</h2>
+          </div>
+
+        <div class="row">
+
+        </div>
+          <div class="row">
+        <div class="col col-lg-12 col-md-auto col-sm-12">
+            <h2></h2>
+            <p>Payment for  Loan ({{ loan.get_loan_id }}) Received.<br>
+    {% if loan.get_balance == 0 %} <p>Your Loan Is Now Paid In Full.</p>{% endif %}
+    <h3>Loan Details</h3><br>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+
+                <tbody id="inv_tbody">
+                <tr>Loan ID: {{ loan.get_loan_id }}</tr>
+                <tr>Loan Amount:  {{ loan.amount | floatformat:2 }}</tr>
+                <tr>Amount To Pay: K {{ loan.get_total_amount | floatformat:2 }}</tr>
+                <tr>Amount Paid: K {{ loan.get_total_payments  | floatformat:2 }}</tr>
+                <tr>Balance: K {{ loan.get_balance | floatformat:2 }}</tr>
+                <tr>Application Date: {{ loan.application_date }}</tr>
+                <tr>Issue Date: {{ loan.issue_date }}</tr>
+                <tr>Due Date: {{ loan.due_date }}</tr>
+                <tr>Rate: {{ loan.get_interest_percentage }}</tr>
+                <tr>Term: {{ loan.get_term_display }}</tr>
+                <tr>Payments: {{ loan.get_payment_frequency_display }}</tr>
+
+
+
+                </tbody>
+            </table>
+        </div>
+
+        <p>Thank You For Your Patronage.</p>
+        <p>This email was sent to {{ loan.customer }} because you applied for a loan from Strive! &trade;. If you believe that this is in error, call +260979524067 for assistance</p>
+        </div>
+        </div>
+      </div>
+
+
+    </section><!-- End Portfolio Section -->
+    <section class="services"></section>
+{% endblock portfolio_section%}
+
+{% block footer %}
+    <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+
+    <div class="container d-md-flex py-4">
+
+      <div class="mr-md-auto text-center text-md-left">
+        <div class="copyright">
+          &copy; Copyright <strong><span>InventLog</span></strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+          <!-- All the links in the footer should remain intact. -->
+          <!-- You can delete the links only if you purchased the pro version. -->
+          <!-- Licensing information: https://bootstrapmade.com/license/ -->
+          <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/presento-bootstrap-corporate-template/ -->
+        </div>
+      </div>
+    </div>
+  </footer><!-- End Footer -->
+{% endblock %}
+{% block about_section %}{% endblock %}
+{% block tabs_section %}{% endblock %}
+{% block clients_section %}{% endblock %}
+{% block faq %}{% endblock %}
+{% block contact_section %}{% endblock %}

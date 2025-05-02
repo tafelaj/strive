@@ -14,5 +14,5 @@ class CustomerForm(forms.ModelForm):
         widgets = {'date_of_birth': DateInput()}
 
 
-StationInventoryFormSet = forms.modelformset_factory(Station, fields=('name', 'address', 'phone'), extra=2)
+StationInventoryFormSet = forms.modelformset_factory(Station, fields=('name', 'address', 'phone', 'available_funds','working_capital'), extra=2)
 CustomerFormSet = forms.modelformset_factory(Customer, fields=('name', 'address', 'phone', 'email', 'date_of_birth', 'nrc', 'sex', 'institution', 'is_active', 'black_listed'), extra=5, can_delete=True)

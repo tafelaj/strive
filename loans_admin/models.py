@@ -30,7 +30,10 @@ class Customer(models.Model):
     black_listed = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.name) + ' ' + str(self.nrc)
+        if self.nrc:
+            return str(self.name) + ' ' + str(self.nrc)
+        else:
+            return str(self.name)
 
 
 class Expenses(models.Model):

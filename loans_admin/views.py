@@ -13,7 +13,13 @@ from django.contrib import messages
 from django.db import transaction
 from django.utils import timezone
 #from django.contrib.messages.views import SuccessMessageMixin
+#email imports
+from django.core import mail
+from django.template import Context
+from django.template.loader import render_to_string, get_template
+
 # Create your views here.
+
 
 
 class Dash(TemplateView):
@@ -154,7 +160,7 @@ class PendingLoansView(FormView):
 
     #approve loans
     def post(self, request, *args, **kwargs):
-        approved_amount = request.POST.get('approved_amount')
+        approved_amount = float(request.POST.get('approved_amount'))
         loan_id = request.POST.get('loan_id')
         try:
             loan = Loan.objects.get(pk=loan_id)
@@ -184,6 +190,31 @@ class PendingLoansView(FormView):
             loan.station.save()
             #save loan changes
             loan.save()
+
+            #send customer email
+            if loan.customer.email or loan.user.email:
+                context = {'loan': loan}
+                message_body = get_template('loans_admin/loan_approval_mail.html').render(context)
+
+                try:
+                    emails = []
+                    # instantiate email
+                    email = mail.EmailMessage(
+                        subject='Your Loan({}) Has Been Approved.'.format(loan.get_loan_id()),
+                        body= message_body,
+                        to=[str(loan.customer.email), ],
+                    )
+                    email.content_subtype = "html"
+                    emails.append(email)
+                    # sending Email Using EmailMessage
+                    # open a connection
+                    connection = mail.get_connection()
+                    connection.open()
+                    connection.send_messages(emails)
+                    connection.close()
+                    messages.success(request, 'Customer Email Sent.')
+                except:
+                    messages.error(request, 'Sorry We Could Not Send The Customer Email')
 
         except Loan.DoesNotExist:
             messages.error(request, 'I couldn\'t Find The Loan For Some Reason. I must be drunk')
@@ -259,6 +290,30 @@ class LoansView(FormView):
                     messages.info(request, 'Loan Has Been Paid In full')
                 messages.success(request, 'Payment Of K{} For Loan ID {} Recorded Successfully'.format(amount,
                                                                                                        loan.get_loan_id()))
+            #send customer email
+            if loan.customer.email or loan.user.email:
+                context = {'loan': loan}
+                message_body = get_template('loans_admin/loan_payment_mail.html').render(context)
+
+                try:
+                    emails = []
+                    # instantiate email
+                    email = mail.EmailMessage(
+                        subject='Loan Payment For({}) Has Been Received.'.format(loan.get_loan_id()),
+                        body= message_body,
+                        to=[str(loan.customer.email), ],
+                    )
+                    email.content_subtype = "html"
+                    emails.append(email)
+                    # sending Email Using EmailMessage
+                    # open a connection
+                    connection = mail.get_connection()
+                    connection.open()
+                    connection.send_messages(emails)
+                    connection.close()
+                    messages.success(request, 'Customer Email Sent.')
+                except:
+                    messages.error(request, 'Sorry We Could Not Send The Customer Email')
 
         except Loan.DoesNotExist:
             messages.error(request, 'I couldn\'t The Loan For Some Reason. I must be drunk')

@@ -16,6 +16,8 @@ class Station(models.Model):
     address = models.CharField(max_length=50)
     phone = models.CharField(max_length=15)
     available_funds = models.FloatField(default=0)
+    working_capital = models.FloatField(default=0)
+
 
     def __str__(self):
         return str(self.name) + ' ' + str(self.address)
