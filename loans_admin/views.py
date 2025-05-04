@@ -462,11 +462,11 @@ class MonthSummeryList(TemplateView):
         year = None
         show_previous_year = kwargs['show_previous_year']
         if show_previous_year == 0:
-            print(show_previous_year)
+            #print(show_previous_year)
             year = datetime.today().year
             previous_year = year - 1
         if show_previous_year == 1:
-            print('take me back in time')
+            #print('take me back in time')
             year = datetime.today().year - 1
             previous_year = year - 1
         #year = datetime.datetime.today().year
@@ -474,81 +474,81 @@ class MonthSummeryList(TemplateView):
         months = []
 
         # show last month of last year
-        last_december = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=12) &
-                                         Q(date__year=previous_year))
+        last_december = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=12) &
+                                         Q(issue_date__year=previous_year))
         if last_december.count() > 0:
             months.append(('December', 12, previous_year))
 
-        january = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=1) &
-                                         Q(date__year=year))
+        january = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=1) &
+                                         Q(issue_date__year=year))
         if january.count() > 0:
             months.append(('January', 1, year))
 
-        february = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=2) &
-                                         Q(date__year=year))
+        february = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=2) &
+                                         Q(issue_date__year=year))
         if february.count() > 0:
             months.append(('February', 2, year))
 
-        march = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=3) &
-                                         Q(date__year=year))
+        march = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=3) &
+                                         Q(issue_date__year=year))
         if march.count() > 0:
             months.append(('March', 3, year))
 
-        april = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=4) &
-                                         Q(date__year=year))
+        april = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=4) &
+                                         Q(issue_date__year=year))
         if april.count() > 0:
             months.append(('April', 4, year))
 
-        may = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=5) &
-                                         Q(date__year=year))
+        may = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=5) &
+                                         Q(issue_date__year=year))
         if may.count() > 0:
             months.append(('May', 5, year))
 
-        june = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=6) &
-                                         Q(date__year=year))
+        june = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=6) &
+                                         Q(issue_date__year=year))
         if june.count() > 0:
             months.append(('June', 6, year))
 
-        july = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=7) &
-                                         Q(date__year=year))
+        july = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=7) &
+                                         Q(issue_date__year=year))
         if july.count() > 0:
             months.append(('July', 7, year))
 
-        august = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=8) &
-                                         Q(date__year=year))
+        august = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=8) &
+                                         Q(issue_date__year=year))
         if august.count() > 0:
             months.append(('August', 8, year))
 
-        september = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=9) &
-                                         Q(date__year=year))
+        september = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=9) &
+                                         Q(issue_date__year=year))
         if september.count() > 0:
             months.append(('September', 9, year))
 
-        october = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=10) &
-                                         Q(date__year=year))
+        october = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=10) &
+                                         Q(issue_date__year=year))
         if october.count() > 0:
             months.append(('October', 10, year))
 
-        november = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=11) &
-                                         Q(date__year=year))
+        november = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=11) &
+                                         Q(issue_date__year=year))
         if november.count() > 0:
             months.append(('November', 11, year))
 
-        december = Summery.objects.filter(Q(station=request.user.station)&
-                                         Q(date__month=12) &
-                                         Q(date__year=year))
+        december = Loan.objects.filter(Q(station=request.user.station)&
+                                         Q(issue_date__month=12) &
+                                         Q(issue_date__year=year))
         if december.count() > 0:
             months.append(('December', 12, year))
 
@@ -567,14 +567,9 @@ class MonthSummeryDetail(TemplateView):
         total_expenditure = 0
         total_pending_loans = 0
         total_active_loans = 0
-        total_expected_cash = 0
-        total_cash_at_hand = 0
+        #total_expected_cash = 0
+        #total_cash_at_hand = 0
         total_profits = 0
-
-        # get queryset
-        summaries = Summery.objects.filter(Q(date__month=month)&
-                                           Q(date__year=year)&
-                                           Q(station=self.request.user.station))
 
         loans_list = Loan.objects.filter(Q(issue_date__month=month) &
                                            Q(issue_date__year=year) &
@@ -589,22 +584,27 @@ class MonthSummeryDetail(TemplateView):
 
 
         #Calculate Totals
-        for summary in summaries:
-            total_payments += summary.total_payments
-            total_pending_loans += summary.total_pending_loans
-            total_active_loans +=summary.total_active_loans
-            total_expenditure +=summary.total_expenditure
-            total_expected_cash += total_expected_cash
-            total_cash_at_hand += summary.total_cash_at_hand
-            total_profits +=summary.total_profits
 
-        cash_difference = total_cash_at_hand - total_expected_cash
+        for loan in loans_list:
+            if loan.status == '3':
+                total_active_loans += loan.amount
+
+            elif loan.status == '1':
+                total_pending_loans += loan.amount
+
+            total_active_loans += loan.amount
 
 
-        context={'summaries': summaries, 'month_name': month_name, 'year': year, 'month':month,
+        for payment in payment_list:
+            total_payments += payment.amount
+            total_profits += payment.get_profits()
+
+        #cash_difference = total_cash_at_hand - total_expected_cash
+
+
+        context={'summaries': None, 'month_name': month_name, 'year': year, 'month':month,
                  'total_payments':total_payments, 'total_expenditure': total_expenditure, 'total_pending_loans': total_pending_loans,
                  'total_active_loans': total_active_loans,
-                 'total_expected_cash': total_expected_cash, 'total_cash_at_hand': total_cash_at_hand, 'cash_difference': cash_difference,
                  'total_profits': total_profits, 'loans_list': loans_list, 'payment_list': payment_list, 'expenses_list': expenses_list}
         return render(request, self.template_name, context)
 
