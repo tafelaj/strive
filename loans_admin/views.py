@@ -112,14 +112,14 @@ class CustomerView(ListView):
     paginate_by = '30'
 
     def get_queryset(self):
-        q = Customer.objects.filter(is_active=True).order_by('-id')
+        q = Customer.objects.filter(Q(station=self.request.user.station) & Q(is_active=True)).order_by('-id')
         return q
 
 class UpdateCustomerView(FormView):
     template_name = 'loans_admin/update_customers.html'
 
     def get(self, request, *args, **kwargs):
-        customers = Customer.objects.all()
+        customers = Customer.objects.filter(station=request.user.station)
 
         formset = forms.CustomerFormSet(queryset=customers)
 
@@ -127,7 +127,7 @@ class UpdateCustomerView(FormView):
         return  render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        customers = Customer.objects.all()
+        customers = Customer.objects.filter(station=request.user.station)
 
         formset = forms.CustomerFormSet(request.POST or None, queryset=customers)
 
@@ -192,7 +192,7 @@ class PendingLoansView(FormView):
             loan.save()
 
             #send customer email
-            if loan.customer.email or loan.user.email:
+            if loan.customer.email:
                 context = {'loan': loan}
                 message_body = get_template('loans_admin/loan_approval_mail.html').render(context)
 
@@ -291,7 +291,7 @@ class LoansView(FormView):
                 messages.success(request, 'Payment Of K{} For Loan ID {} Recorded Successfully'.format(amount,
                                                                                                        loan.get_loan_id()))
             #send customer email
-            if loan.customer.email or loan.user.email:
+            if loan.customer.email:
                 context = {'loan': loan}
                 message_body = get_template('loans_admin/loan_payment_mail.html').render(context)
 
@@ -663,7 +663,7 @@ class IssueLoanExistingCustomer(FormView):
         loan_form = loans.forms.LoanForm()
 
         #get existing customers
-        customers = Customer.objects.filter(is_active=True)
+        customers = Customer.objects.filter(Q(station=request.user.station) & Q(is_active=True))
 
         context = {'loan_form': loan_form, 'customers': customers,}
         return render(request, self.template_name, context)
