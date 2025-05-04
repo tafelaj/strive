@@ -111,7 +111,7 @@
 
             <li class="drop-down"><a href="">More</a>
                 <ul>
-                    <li><a href="{% url 'loans_admin:summary_list' %}">Previous Summaries</a></li>
+                    {% comment %}<li><a href="{% url 'loans_admin:summary_list' %}">Previous Summaries</a></li>{% endcomment %}
                     <li><a href="{% url 'loans_admin:month_summary_list' show_previous_year=0 %}">Month Summaries</a></li>
                 </ul>
             </li>
