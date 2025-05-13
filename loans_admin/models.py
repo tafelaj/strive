@@ -20,7 +20,7 @@ class Customer(models.Model):
     address = models.CharField(max_length=50, help_text='Enter Address')
     phone = models.CharField(max_length=13)
     email = models.EmailField(blank=True, null=True)
-    date_of_birth = models.DateField(help_text='Enter Customer\'s Date Of Birth(YYYY-MM-DD)', blank=True, null=True)
+    date_of_birth = models.DateField(help_text='Enter Customer\'s Date Of Birth (YYYY-MM-DD)', blank=True, null=True)
     nrc = models.CharField(max_length=15, help_text='Enter NRC number', blank=True, null=True)
     sex = models.CharField(max_length=1, choices=SEX, help_text='Set The Customer\'s Gender')
     institution = models.ForeignKey(CustomerInstitution, help_text='Enter Customer\'s Related Institution', blank=True, null=True, on_delete=models.DO_NOTHING)

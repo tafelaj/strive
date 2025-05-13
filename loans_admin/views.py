@@ -153,7 +153,7 @@ class PendingLoansView(FormView):
     template_name = 'loans_admin/pending_loan_list.html'
 
     def get(self, request, *args, **kwargs):
-        loans = Loan.objects.filter(Q(status='1')).order_by('-id')
+        loans = Loan.objects.filter(Q(status='1') & Q(station=request.user.station)).order_by('-id')
 
         context = {'loans': loans, }
         return render(request, self.template_name, context)
