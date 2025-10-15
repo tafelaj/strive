@@ -195,7 +195,7 @@
                     <div class="card-footer">
                         <button data-toggle="modal" data-target="#loanPaymentModel{{ loan.id }}" class="btn btn-primary">Make Payment</button><!--MODEL-->
                         <button data-toggle="modal" data-target="#loanDetail{{ loan.id }}" class="btn btn-info">Details</button><!--modal-->
-                        <a href="#" class="btn btn-warning">Update</a>
+                        <a href="{% url 'loans_admin:loan_update' pk=loan.id %}" class="btn btn-warning">Update</a>
                     </div>
                     </div>
                   </div>

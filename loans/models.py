@@ -4,6 +4,7 @@ from django.utils import timezone
 from investor.models import StriveUser, Station
 # Create your models here.
 from loans_admin.models import Customer
+from django.urls import reverse
 
 
 class LoanAccount(models.Model):
@@ -127,6 +128,9 @@ class Loan(models.Model):
     def is_past_due(self):
         if timezone.now() > self.due_date:
             return True
+
+    def get_absolute_url(self):
+        return reverse('loans_admin:loan_details', kwargs={'pk': self.pk})
 
 
 class LoanPayment(models.Model):

@@ -26,6 +26,8 @@ urlpatterns = [
     path('loans/completed/list/', views.CompletedLoans.as_view(), name='completed_loans'),
     #path('loans/pastdue/list/', views.CompletedLoans.as_view(), name='past_due_loans'),
     path('loans/<int:pk>/details', views.LoanDetails.as_view(), name='loan_details'),
+    #update loans
+    path('loans/<int:pk>/update', views.LoansUpdate.as_view(), name='loan_update'),
 
     #summary
     path('summary/', views.SummaryView.as_view(), name='summary'),

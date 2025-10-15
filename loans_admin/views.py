@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, redirect
-from django.views.generic import TemplateView, ListView, FormView, DetailView
+from django.views.generic import TemplateView, ListView, FormView, DetailView, UpdateView
 
 import loans.forms
 from loans_admin.models import Customer, Expenses, Summery
@@ -749,8 +749,39 @@ class SaveOpeningBalance(FormView):
         summary.save()
         return HttpResponseRedirect(reverse_lazy('loans_admin:summary'))
 
-class LoansUpdate():
-    pass
+class LoansUpdate(UpdateView):
+    template_name = 'loans_admin/loan_update.html'
+    model = Loan
+    fields = ('due_date', 'amount', 'interest_rate', 'term', 'status')
+
+    def post(self, request, *args, **kwargs):
+        # send email to client to notify them of changes MADE
+        loan = Loan.objects.get(pk=kwargs['pk'])
+        # send customer email
+        if loan.customer.email:
+            context = {'loan': loan}
+            message_body = get_template('loans_admin/loan_update_mail.html').render(context)
+
+            try:
+                emails = []
+                # instantiate email
+                email = mail.EmailMessage(
+                    subject='Your Loan({}) Has Been Updated.'.format(loan.get_loan_id()),
+                    body=message_body,
+                    to=[str(loan.customer.email), ],
+                )
+                email.content_subtype = "html"
+                emails.append(email)
+                # sending Email Using EmailMessage
+                # open a connection
+                connection = mail.get_connection()
+                connection.open()
+                connection.send_messages(emails)
+                connection.close()
+                messages.success(request, 'Customer Email Sent.')
+            except:
+                messages.error(request, 'Sorry We Could Not Send The Customer Email')
+        return super().post(request, *args, **kwargs)
 
 class SavingsView(FormView):
     template_name = 'loans_admin/savings.html'
